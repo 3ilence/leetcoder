@@ -51,7 +51,7 @@ public class Solution {
     }
 /*LeetCode剑指Offer第六题*/
     /*输入一个链表的头节点，从尾到头反过来返回每个节点的值（用数组返回）*/
-    public class ListNode {
+    class ListNode {
         int val;
         ListNode next;
         ListNode(int x) { val = x; }
@@ -1044,7 +1044,28 @@ class Node {
         }
         return res;
     }
-    /*剑指offer第五十二题*/
+    /*剑指offer第五十五-1题*/
+    /*求树深度：层序遍历*/
+    public int maxDepth(TreeNode root) {
+        if (root == null)
+            return 0;
+        Queue<TreeNode> queue = new LinkedList<>();
+        Queue<TreeNode> tmp;
+        queue.offer(root);
+        int depth = 0;
+        while (!queue.isEmpty()) {
+            tmp = new LinkedList<>();
+            for (TreeNode node : queue) {
+                if (node.left != null)
+                    tmp.add(node.left);
+                if (node.right != null)
+                    tmp.add(node.right);
+            }
+            queue = tmp;
+            depth++;
+        }
+        return depth;
+    }
     /*1143.最长公共子序列*/
     public int longestCommonSubsequence(String text1, String text2) {
         int[][] res = new int[text1.length()+1][text2.length()+1];
@@ -1140,6 +1161,34 @@ class Node {
             return true;
         return false;
     }
+    /*145.二叉树的后序遍历*/
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (root == null) {
+            return res;
+        }
+
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        TreeNode prev = null;
+        while (root != null || !stack.isEmpty()) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            /*如果右子树为空或者已经访问过了才访问根结点
+            否则，需要将该结点再次压回栈中，去访问其右子树*/
+            if (root.right == null || root.right == prev) {
+                res.add(root.val);
+                prev = root;
+                root = null;
+            } else {
+                stack.push(root);
+                root = root.right;
+            }
+        }
+        return res;
+    }
     /*1190.反转每对括号间的子串*/
 
     /**
@@ -1193,9 +1242,10 @@ class Node {
     /**/
     /**/
     public static void main(String[] args) {
-        int[] arr = {5,4,3,2};
-        Solution solution = new Solution();
-        System.out.println(solution.reversePairs(arr));
+        int x = '1';
+        char y = 65;
+        System.out.println(x);
+        System.out.println(y);
     }
 
 

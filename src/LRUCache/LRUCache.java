@@ -17,8 +17,8 @@ public class LRUCache<K, V> {
     private Node<K, V> tail;
 
     public LRUCache() {
-        head = new Node<>();
-        tail = new Node<>();
+        head = new Node<K, V>();
+        tail = new Node<K, V>();
         //双向链表
         head.next = tail;
         head.pre = tail;
@@ -46,7 +46,7 @@ public class LRUCache<K, V> {
                 tail.pre = tail.pre.pre;//尾部的上个节点设置为尾部的上上个节点
             }
             //将新节点加入到table
-            node = new Node<>();
+            node = new Node<K, V>();
             node.key = key;
             node.value = value;
             table.put(key, node);
@@ -89,7 +89,7 @@ public class LRUCache<K, V> {
     }
 
     public static void main(String[] args) {
-        LRUCache<Integer, Integer> cache = new LRUCache<>(4);
+        LRUCache<Integer, Integer> cache = new LRUCache<Integer, Integer>(4);
         cache.put(1,1);
         cache.put(2, 2);
         cache.put(3, 3);
