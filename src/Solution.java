@@ -1066,6 +1066,104 @@ class Node {
         }
         return depth;
     }
+    /*剑指offer第五十五-2题*/
+    /*判断一棵树是否是平衡树*/
+    public boolean isBalanced(TreeNode root) {
+        return recur(root) != -1;
+    }
+
+    /**
+     * 通过后序遍历判断一棵树是否是平衡树
+     * @param root 树的根节点
+     * @return 平衡树返回0，否则返回-1
+     */
+    private int recur(TreeNode root) {
+        if (root == null)
+            return 0;
+        int left = recur(root.left);
+        if (left == -1)
+            return -1;
+        int right = recur(root.right);
+        if (right == -1)
+            return -1;
+        return Math.abs(left - right) < 2 ? Math.max(left, right) + 1 : -1;
+    }
+
+    /**
+     * 剑指offer第56-1题
+     * 一个整型数组 nums 里除两个数字之外，其他数字都出现了两次
+     * 解法为将数组分为两组分别异或运算，分组依据为x和y中有某一位不相同
+     * 数组nums中该位和x相同的分一组，和y不同的分一组
+     * @param nums 输入数组
+     * @return 找到那两个只出现了一次的数字
+     */
+    public int[] singleNumbers(int[] nums) {
+        int x = 0, y = 0, n = 0, m = 1;
+        /*首先对整个数组作异或，得到的结果就是这两个数的异或结果*/
+        for (int num : nums)
+            n ^= num;
+        /*因为这两个数不等，所以n的二进制表示中必然有一位为1*/
+        while ((n & m) == 0)
+            m <<= 1;
+        /*我们通过m来找到某一位为1，则有a & m == 1, b & m != 1*/
+        /*其中a，b是我们要得到的答案*/
+        /*举个例子，a=1001和b=0001，那么m=1000，当然a和b可能有多位不同，但是我们只需要根据其中的一位来对原数组进行划分即可*/
+        /*通过m将原数组分为两组，那么问题就转换为找到数组中唯一一个只出现一次的数*/
+        /*再对每一组分别异或，得到的就是答案*/
+        for (int num : nums) {
+            if ((num & m) != 0)
+                x ^= num;
+            else
+                y ^= num;
+        }
+        return new int[] {x, y};
+    }
+
+    /**
+     * 剑指offer第56-2题
+     * 在一个数组 nums 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+     * 解法为计算二进制每一位上的数字和，并对该数字和对3取余，得到的就是那个只出现一次的数
+     * @param nums 输入数组
+     * @return 数组中只出现了一次的那个数
+     */
+    public int singleNumber(int[] nums) {
+       /*int[] counts = new int[32];
+        for (int num : nums) {
+            for (int j = 0; j < 32; j++) {
+                counts[j] += num & 1;
+                num >>>= 1;
+            }
+        }
+        int res = 0, m = 3;
+        for (int i = 0; i < 32; i++) {
+            res <<= 1;
+            res |= counts[31 - i] % m;
+        }
+        return res;*/
+        /*有限状态自动机*/
+        /*感觉题解在用数电知识写代码*/
+        int ones = 0, twos = 0;
+        for (int num : nums) {
+            ones = ones ^ num & ~twos;
+            twos = twos ^ num & ~ones;
+        }
+        return ones;
+    }
+
+    /**
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public static int[] twoSum(int[] nums, int target) {
+        int res = 0;
+        for (int i = 0; i < nums.length - 1; i++) {
+
+        }
+        return null;
+    }
+
     /*1143.最长公共子序列*/
     public int longestCommonSubsequence(String text1, String text2) {
         int[][] res = new int[text1.length()+1][text2.length()+1];
@@ -1242,10 +1340,7 @@ class Node {
     /**/
     /**/
     public static void main(String[] args) {
-        int x = '1';
-        char y = 65;
-        System.out.println(x);
-        System.out.println(y);
+        System.out.println("hello");
     }
 
 
