@@ -1151,19 +1151,152 @@ class Node {
     }
 
     /**
-     *
-     * @param nums
-     * @param target
+     * 剑指offer第57题其1
+     * 对撞双指针解法，注意这里使用双指针是可行的，不会遗漏正确解
+     * @param nums 递增数组
+     * @param target 目标和
      * @return
      */
-    public static int[] twoSum(int[] nums, int target) {
+    public int[] twoSum(int[] nums, int target) {
         int res = 0;
-        for (int i = 0; i < nums.length - 1; i++) {
-
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            if (nums[left] + nums[right] > target)
+                right--;
+            else if (nums[left] + nums[right] < target)
+                left++;
+            else
+                return new int[]{nums[left], nums[right]};
         }
         return null;
     }
 
+    /**
+     * 剑指offer第57题其二，解法滑动窗口，注意点是有参toArray()方法的使用
+     * @param target
+     * @return
+     */
+    public int[][] findContinuousSequence(int target) {
+        int i = 1, j = 2, s = 3;
+        List<int[]> res = new ArrayList<>();
+        while(i < j) {
+            if(s == target) {
+                int[] ans = new int[j - i + 1];
+                for(int k = i; k <= j; k++)
+                    ans[k - i] = k;
+                res.add(ans);
+            }
+            if(s >= target) {
+                s -= i;
+                i++;
+            } else {
+                j++;
+                s += j;
+            }
+        }
+        return res.toArray(new int[0][]);
+    }
+
+    /**
+     * 剑指offer第58题其1，解法使用滑动窗口或者使用正则表达式"[\\s]"进行单词的分割
+     * @param s
+     * @return
+     */
+    public static String reverseWords(String s) {
+        Stack<String> stack = new Stack<>();
+        int last = -1;//上一个空格的位置
+        int i = 0;
+        while(i < s.length()) {
+            if (s.charAt(i) == ' ') {
+                if ((i - last) != 1) {
+                    stack.push(s.substring(last + 1,i));
+                    //System.out.println("上一个空格位置：" + last + "，这一个空格位置：" + i + "，结果字符串为：" + s.substring(last,i));
+                }
+                last = i;
+            }
+            i++;
+        }
+        //System.out.println("上一个空格位置：" + last + "，字符串尾位置：" + i + "，结果字符串为：" + s.substring(last,i));
+        if ((i - last) != 1)
+            stack.push(s.substring(last+1, i));
+        StringBuilder res = new StringBuilder();
+        //System.out.println(stack.size());
+        while (!stack.isEmpty()) {
+            res.append(stack.pop());
+            if (!stack.isEmpty())
+                res.append(" ");
+        }
+        return res.toString();
+    }
+
+    /**
+     * 剑指offer第58题其2
+     * @param s 待处理的字符串
+     * @param n 需要移到末尾的串长度
+     * @return 处理结果字符串
+     */
+    public String reverseLeftWords(String s, int n) {
+        if (n >= s.length()) {
+            return s;
+        }
+        return s.substring(n,s.length()) + s.substring(0,n);
+    }
+
+    /**
+     * 剑指offer第59题其1：求滑动窗口内的最大值
+     * @param nums 数组
+     * @param k 窗口大小
+     * @return 移动过程中的最大值构成的数组
+     */
+
+    /**
+     * 剑指offer第61题
+     * @param nums
+     * @return
+     */
+    public static boolean isStraight(int[] nums) {
+        Arrays.sort(nums);
+        int flag = 0;
+        if (nums[0] == 0) {
+            if (nums.length >= 2 && nums[1] == 0) {
+                flag = 2;
+            } else {
+                flag = 1;
+            }
+        }
+        int i = 0,pre = 0;
+        while (i < nums.length && nums[i] != 0) {
+            if (pre == nums[i])
+                return false;
+            if (pre != 0 && pre + 1 != nums[i]) {
+                flag--;
+            }
+            if (flag < 0)
+                return false;
+        }
+        return true;
+    }
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums.length == 0 || k == 0) return new int[0];
+        int[] res = new int[nums.length + 1 - k];
+        Deque<Integer> deque = new LinkedList<>();
+        for (int i = 0; i < k; i++) {
+            while(!deque.isEmpty() && deque.peekLast() < nums[i])
+                deque.removeLast();
+            deque.addLast(nums[i]);
+        }
+        res[0] = deque.peekFirst();
+        for (int i = k; i < nums.length; i++) {
+            //如果滑动窗口第一个就是最大值的话，那么在窗口变动前只需要移除窗口首部元素
+            if (deque.peekFirst() == nums[i - k])
+                deque.removeFirst();
+            while (!deque.isEmpty() && deque.peekLast() < nums[i])
+                deque.removeLast();
+            deque.addLast(nums[i]);
+            res[i - k + 1] = deque.peekFirst();
+        }
+        return res;
+    }
     /*1143.最长公共子序列*/
     public int longestCommonSubsequence(String text1, String text2) {
         int[][] res = new int[text1.length()+1][text2.length()+1];

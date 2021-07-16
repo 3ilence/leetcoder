@@ -5,7 +5,9 @@ import java.util.Map;
 
 public class test {
     public static void main(String[] args) {
-        nthUglyNumber(10);
+        Solution solution = new Solution();
+        int[] arr = {0,1,0,2,5};
+        System.out.println(Solution.isStraight(arr));
     }
     public static int nthUglyNumber(int n) {
         int[] dp = new int[1700];
