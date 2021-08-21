@@ -1008,7 +1008,6 @@ class Node {
         return ' ';
     }
     /*剑指offer第五十一题*/
-
     /**
      * 求数组中逆序对的个数
      * @param nums 数组
@@ -1248,11 +1247,66 @@ class Node {
      * @param k 窗口大小
      * @return 移动过程中的最大值构成的数组
      */
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums.length == 0 || k == 0) return new int[0];
+        int[] res = new int[nums.length + 1 - k];
+        Deque<Integer> deque = new LinkedList<>();
+        for (int i = 0; i < k; i++) {
+            while(!deque.isEmpty() && deque.peekLast() < nums[i])
+                deque.removeLast();
+            deque.addLast(nums[i]);
+        }
+        res[0] = deque.peekFirst();
+        for (int i = k; i < nums.length; i++) {
+            //如果滑动窗口第一个就是最大值的话，那么在窗口变动前只需要移除窗口首部元素
+            if (deque.peekFirst() == nums[i - k])
+                deque.removeFirst();
+            while (!deque.isEmpty() && deque.peekLast() < nums[i])
+                deque.removeLast();
+            deque.addLast(nums[i]);
+            res[i - k + 1] = deque.peekFirst();
+        }
+        return res;
+    }
 
     /**
-     * 剑指offer第61题
-     * @param nums
+     * 剑指offer第60题：n个骰子的点数的概率
+     * @param n
      * @return
+     */
+    public double[] dicesProbability(int n) {
+        //（5n + 1)
+        double[][] dp = new double[n+1][6 * n];
+        //dp[1][0] = 0.0 / 6;
+        dp[1][0] = 1.0 / 6;
+        dp[1][1] = 1.0 / 6;
+        dp[1][2] = 1.0 / 6;
+        dp[1][3] = 1.0 / 6;
+        dp[1][4] = 1.0 / 6;
+        dp[1][5] = 1.0 / 6;
+        for (int i = 1; i < n; i++) {
+            for (int j = i - 1; j < 6 * i; j++) {
+                dp[i + 1][j + 1] += dp[i][j]  / 6;
+                dp[i + 1][j + 2] += dp[i][j]  / 6;
+                dp[i + 1][j + 3] += dp[i][j]  / 6;
+                dp[i + 1][j + 4] += dp[i][j]  / 6;
+                dp[i + 1][j + 5] += dp[i][j]  / 6;
+                dp[i + 1][j + 6] += dp[i][j]  / 6;
+            }
+        }
+        double[] res = new double[5 * n + 1];
+        int j = n;
+        for (int i = 0; i < 5 * n + 1; i++) {
+            res[i] = dp[n][j - 1];
+            j++;
+        }
+        return res;
+
+    }
+    /**
+     * 剑指offer第61题：扑克牌中的顺子
+     * @param nums
+     * @return 如果是顺子则返回true，否则返回false
      */
     public static boolean isStraight(int[] nums) {
         Arrays.sort(nums);
@@ -1276,27 +1330,68 @@ class Node {
         }
         return true;
     }
-    public int[] maxSlidingWindow(int[] nums, int k) {
-        if(nums.length == 0 || k == 0) return new int[0];
-        int[] res = new int[nums.length + 1 - k];
-        Deque<Integer> deque = new LinkedList<>();
-        for (int i = 0; i < k; i++) {
-            while(!deque.isEmpty() && deque.peekLast() < nums[i])
-                deque.removeLast();
-            deque.addLast(nums[i]);
+
+    /**
+     * 剑指offer第62题：圆圈中最后剩下的数字：约瑟夫环问题，动态规划
+     * @param n 环的长度
+     * @param m 计数
+     * @return 返回最后剩下的那个数字
+     */
+    public int lastRemaining(int n, int m) {
+        int[] dp = new int[n];
+        dp[0] = 0;
+        for (int i = 0; i < n - 1; i++) {
+            dp[i+1] = (m-1 + dp[i] + 1) % (i + 2);
         }
-        res[0] = deque.peekFirst();
-        for (int i = k; i < nums.length; i++) {
-            //如果滑动窗口第一个就是最大值的话，那么在窗口变动前只需要移除窗口首部元素
-            if (deque.peekFirst() == nums[i - k])
-                deque.removeFirst();
-            while (!deque.isEmpty() && deque.peekLast() < nums[i])
-                deque.removeLast();
-            deque.addLast(nums[i]);
-            res[i - k + 1] = deque.peekFirst();
-        }
-        return res;
+        return dp[n - 1];
     }
+
+    /**
+     * 剑指offer第65题：不使用加减乘除实现加法运算
+     * @param a 加数
+     * @param b 加数
+     * @return 和
+     */
+    public int add(int a, int b) {
+        while(b != 0) {// 当进位为0的时候跳出
+            //一开始的时候是没有进位的，我们把a+b分解为无进位结果+进位，无进位结果用异或运算求出
+            //进位由与运算并算数左移一位求出
+            //循环求解直至进位为0，此时a即结果
+            int c = (a & b) << 1;
+            a ^= b;
+            b = c;
+        }
+        return a;
+    }
+
+    /**
+     * 剑指offer第66题：不使用除法求乘积数组
+     * @param a
+     * @return
+     */
+    public int[] constructArr(int[] a) {
+        if (a == null || a.length == 0)
+            return a;
+        int len = a.length;
+        int[] left = new int[len];
+        int[] right = new int[len];
+        left[0] = right[len - 1] = 1;
+
+        for (int i = 1; i < len; i++) {
+            left[i] = left[i - 1] * a[i -1];
+        }
+        for (int i = len - 2; i >= 0; i--) {
+            right[i] = right[i + 1] * a[i + 1];
+        }
+
+        int[] ans = new int[len];
+        for (int i = 0; i < len; i++) {
+            ans[i] = left[i] * right[i];
+        }
+        return ans;
+    }
+
+
     /*1143.最长公共子序列*/
     public int longestCommonSubsequence(String text1, String text2) {
         int[][] res = new int[text1.length()+1][text2.length()+1];
@@ -1373,7 +1468,12 @@ class Node {
         }
         return text1.substring(start, end);
     }
-    /*20.有效的括号，括号匹配*/
+
+    /**
+     * 20.有效的括号，括号匹配
+     * @param s 带判断的括号字符串
+     * @return
+     */
     public boolean isValid(String s) {
         if (s.isEmpty())
             return true;
@@ -1391,6 +1491,61 @@ class Node {
         if (stack.empty())
             return true;
         return false;
+    }
+    /**
+     * 20.有效的括号，这是过了很久自己独立写的
+     * @param s
+     * @return
+     */
+    public boolean isValid2(String s) {
+        if (s.length() == 0)
+            return true;
+        Stack<Character> stack = new Stack<>();
+        int start = 0;
+        while (start < s.length() ) {
+            if (s.charAt(start) == '(') {
+                stack.push(')');
+            } else if (s.charAt(start) == '[') {
+                stack.push(']');
+            } else if (s.charAt(start) == '{') {
+                stack.push('}');
+            } else {
+                if (!stack.isEmpty() && stack.peek() == s.charAt(start)) {
+                    stack.pop();
+                } else {
+                    return false;
+                }
+            }
+            start++;
+        }
+        return stack.empty();
+    }
+
+    /**
+     * 21.合并有序链表，学习答案的简洁的代码
+     * @param l1
+     * @param l2
+     * @return
+     */
+    public ListNode mergeTwoLists2(ListNode l1, ListNode l2) {
+        ListNode prehead = new ListNode(-1);
+
+        ListNode prev = prehead;
+        while (l1 != null && l2 != null) {
+            if (l1.val <= l2.val) {
+                prev.next = l1;
+                l1 = l1.next;
+            } else {
+                prev.next = l2;
+                l2 = l2.next;
+            }
+            prev = prev.next;
+        }
+
+        // 合并后 l1 和 l2 最多只有一个还未被合并完，我们直接将链表末尾指向未合并完的链表即可
+        prev.next = l1 == null ? l2 : l1;
+
+        return prehead.next;
     }
     /*145.二叉树的后序遍历*/
     public List<Integer> postorderTraversal(TreeNode root) {
