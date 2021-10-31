@@ -1608,6 +1608,7 @@ class Node {
 
     /**
      * 反转字符数组arr从start到end位置的字符
+     *
      * @param arr 字符数组
      * @param start 起始位置，闭区间
      * @param end 结束位置，闭区间
@@ -1629,9 +1630,10 @@ class Node {
     /**/
 
     /**
-     * 632.最小区间
-     * @param nums
-     * @return
+     * 632.最小区间，给出的是贪心加堆的做法，还可以用滑动窗口，滑动窗口更加巧妙
+     *
+     * @param nums 二维列表
+     * @return 区间上下界
      */
     public int[] smallestRange(List<List<Integer>> nums) {
         //区间的左边和右边
@@ -1683,6 +1685,50 @@ class Node {
             max = Math.max(max, nums.get(minIndex).get(next[minIndex]));
         }
         return new int[]{rangeLeft, rangeRight};
+    }
+
+    /**
+     * 685.冗余连接II
+     *
+     * @param edges
+     * @return
+     */
+    public int[] findRedundantDirectedConnection(int[][] edges) {
+        int n = edges.length;
+        UnionFind uf = new UnionFind(n + 1);
+        int[] parent = new int[n + 1];
+        for (int i = 1; i <= n; ++i) {
+            parent[i] = i;
+        }
+        int conflict = -1;
+        int cycle = -1;//是否成环
+        for (int i = 0; i < n; ++i) {
+            int[] edge = edges[i];
+            int node1 = edge[0], node2 = edge[1];
+            if (parent[node2] != node2) {
+                conflict = i;
+            } else {
+                parent[node2] = node1;
+                if (uf.find(node1) == uf.find(node2)) {
+                    cycle = i;
+                } else {
+                    uf.union(node1, node2);
+                }
+            }
+        }
+        if (conflict < 0) {
+            int[] redundant = {edges[cycle][0], edges[cycle][1]};
+            return redundant;
+        } else {
+            int[] conflictEdge = edges[conflict];
+            if (cycle >= 0) {
+                int[] redundant = {parent[conflictEdge[1]], conflictEdge[1]};
+                return  redundant;
+            } else {
+                int[] redudant = {conflictEdge[0], conflictEdge[1]};
+                return redudant;
+            }
+        }
     }
     public static void main(String[] args) {
         System.out.println("hello");
