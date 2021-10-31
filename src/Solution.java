@@ -1705,13 +1705,16 @@ class Node {
         for (int i = 0; i < n; ++i) {
             int[] edge = edges[i];
             int node1 = edge[0], node2 = edge[1];
+            // 如果不是初始状态，即已经有了父节点，说明node2已经有了两个父节点，记录冲突
             if (parent[node2] != node2) {
                 conflict = i;
             } else {
                 parent[node2] = node1;
+                // 如果在(node1,node2)的关系union之前他俩的祖先就相同的话，加上这条边就成环了
                 if (uf.find(node1) == uf.find(node2)) {
                     cycle = i;
                 } else {
+                    // 否则将两个连通分支进行合并
                     uf.union(node1, node2);
                 }
             }
