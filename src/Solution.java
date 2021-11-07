@@ -1817,6 +1817,7 @@ class Node {
 
     /**
      * 求格子所属岛屿面积
+     *
      * @param grid 地形矩阵
      * @param r row，行
      * @param c col，列
@@ -1836,6 +1837,7 @@ class Node {
 
     /**
      * 862.和至少为k的最短子数组
+     *
      * @param nums
      * @param k
      * @return
@@ -1871,6 +1873,7 @@ class Node {
 
     /**
      * 1283.使结果不超过阈值的最小除数，二分查找
+     *
      * @param nums 被除数数组
      * @param threshold 阈值
      * @return 除数
@@ -1901,6 +1904,67 @@ class Node {
         }
         return res;
     }
+
+    /**
+     * 1438.绝对差不超过限制的最长连续子数组，滑动窗口+有序集合
+     *
+     * @param nums 整型数组
+     * @param limit 限制值
+     * @return 满足条件子数组最大长度
+     */
+    public int longestSubarray(int[] nums, int limit) {
+        if (limit < 0) {
+            return 0;
+        }
+        TreeMap<Integer, Integer> window = new TreeMap<>();
+        int length = nums.length;
+        int left = 0, right = 0;
+        int res = 0;
+        while (right < nums.length) {
+            window.put(nums[right], window.getOrDefault(nums[right], 0) + 1);
+            while (window.lastKey() - window.firstKey() > limit) {
+                window.put(nums[left], window.get(nums[left]) - 1);
+                if (window.get(nums[left]) == 0) {
+                    window.remove(nums[left]);
+                }
+                left++;
+            }
+            res = Math.max(res, right - left + 1);
+            right++;
+        }
+        return res;
+    }
+
+    /**
+     * 1438.绝对差不超过限制的最长连续子数组，滑动窗口+双端队列，基本思想就是维护最大值和最小值，队列中只保留当前窗口的最值，如果不在窗口内就移除
+     *
+     * @param nums
+     * @param limit
+     * @return
+     */
+    public int longestSubarray2(int[] nums, int limit) {
+        Deque<Integer> maxQueue = new ArrayDeque<>();
+        Deque<Integer> minQueue = new ArrayDeque<>();
+        int l = 0, r = 0, res = 0;
+        while (r < nums.length) {
+            while (!maxQueue.isEmpty() && nums[r] > maxQueue.peekLast())
+                maxQueue.removeLast();
+            while (!minQueue.isEmpty() && nums[r] < minQueue.peekLast())
+                minQueue.removeLast();
+            maxQueue.add(nums[r]);
+            minQueue.add(nums[r]);
+            r++;
+            while (maxQueue.peek() - minQueue.peek() > limit) {
+                if (maxQueue.peek() == nums[l]) maxQueue.remove();
+                if (minQueue.peek() == nums[l]) minQueue.remove();
+                l += 1;
+            }
+            res = Math.max(res, r - l);
+        }
+        return res;
+    }
+
+
 
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
