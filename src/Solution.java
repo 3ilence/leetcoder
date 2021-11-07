@@ -1733,8 +1733,175 @@ class Node {
             }
         }
     }
+
+    /**
+     * 695.岛屿的最大面积，方法dfs，关键在于序号标记，因为联通的陆地一定是同一个岛屿，我们用序号标记出来，表示它们被计算过了，方便算出面积
+     * @param grid 地形矩阵，0为海洋，1为陆地
+     * @return 最大面积
+     */
+    public int maxAreaOfIsland(int[][] grid) {
+        //题目有给矩阵最少为1x1
+        int row = grid.length;//矩阵行数
+        int col = grid[0].length;//矩阵列数
+        int res = 0, index = 2;
+        int area = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 1) {
+                    area = area(grid, i, j, index++);
+                }
+                res = Math.max(area, res);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 827.最大人工岛，获取海洋格子相邻的岛屿，如果相邻的岛屿有两个，那么当这个海洋格子变成陆地岛屿就会合并
+     * @param grid 地形矩阵
+     * @return 最多将一个0变成1，最终最大岛屿的面积
+     */
+    public int largestIsland(int[][] grid) {
+        if (grid == null || grid.length == 0) return 1;
+        int res = 0;
+        int index = 2;
+        HashMap<Integer, Integer> indexAndAreas = new HashMap<>();
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                if (grid[r][c] == 1) {
+                    int area = area(grid, r, c, index);
+                    indexAndAreas.put(index, area);
+                    index++;
+                    res = Math.max(res, area);
+                }
+            }
+        }
+        //System.out.println(res);
+        if (res == 0) return 1;
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                if (grid[r][c] == 0) {//遍历海洋格子
+                    HashSet<Integer> hashSet = findNeighbour(grid, r, c);
+                    if (hashSet.size() < 1) continue;
+                    int twoIsland = 1;
+                    for (Integer i : hashSet) twoIsland += indexAndAreas.get(i);
+                    res = Math.max(res, twoIsland);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 获取海洋格子的邻接岛屿
+     * @param grid
+     * @param r
+     * @param c
+     * @return
+     */
+    private HashSet<Integer> findNeighbour(int[][] grid, int r, int c) {
+        HashSet<Integer> hashSet = new HashSet<>();
+        if (inArea(grid, r - 1, c) && grid[r - 1][c] != 0)
+            hashSet.add(grid[r - 1][c]);
+        if (inArea(grid, r + 1, c) && grid[r + 1][c] != 0)
+            hashSet.add(grid[r + 1][c]);
+        if (inArea(grid, r, c - 1) && grid[r][c - 1] != 0)
+            hashSet.add(grid[r][c - 1]);
+        if (inArea(grid, r, c + 1) && grid[r][c + 1] != 0)
+            hashSet.add(grid[r][c + 1]);
+        return hashSet;
+    }
+
+    /**
+     * 求面积
+     * @param grid
+     * @param r
+     * @param c
+     * @param index
+     * @return
+     */
+    private int area(int[][] grid, int r, int c, int index) {
+        if (!inArea(grid, r, c)) return 0;
+        if (grid[r][c] != 1) return 0;
+        grid[r][c] = index;
+        return 1 + area(grid, r - 1, c, index) + area(grid, r + 1, c, index) + area(grid, r, c - 1, index) + area(grid, r, c + 1, index);
+    }
+
+    private boolean inArea(int[][] grid, int r, int c) {
+        return r >= 0 && r < grid.length && c >= 0 && c < grid[0].length;
+    }
+
+    /**
+     * 862.和至少为k的最短子数组
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int shortestSubarray(int[] nums, int k) {
+        int left = 0, right = 0;
+        int res = -1;
+        int current = nums[0];
+        if (nums[0] >= k) {
+            return 1;
+        }
+        while (right < nums.length - 1) {
+            right++;
+            current += nums[right];
+            if (current < k) {
+                continue;
+            } else {
+                /*while (current - nums[left] >= k) {
+                    current -= nums[left];
+                    left++;
+                }
+                上面这种写法不行对于用例：[84,-37,32,40,95] 167
+                我的想法是需要存取以下标i开始的最小连续和*/
+                if (res == -1) {
+                    res = right - left + 1;
+                } else if (right - left + 1 < res) {
+                    res = right - left + 1;
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 1283.使结果不超过阈值的最小除数，二分查找
+     * @param nums 被除数数组
+     * @param threshold 阈值
+     * @return 除数
+     */
+    public int smallestDivisor(int[] nums, int threshold) {
+        //查找符合条件区间的最左端
+        int length = nums.length;
+        Arrays.sort(nums);
+        int left = 1;
+        int right = nums[length - 1];
+        int mid;
+        while (left < right) {
+            mid = (left + right) / 2;
+            int midR = tool(nums, threshold, mid);
+            if (midR <= threshold) {
+                right = mid;// 商的和小了，除数偏大，所以将区间缩小，注意必须确保正确答案仍然在缩小后的区间中
+            } else {
+                left = mid + 1;// midR是除的商的和，商大了，说明除数小了，自己感觉一直没有把题意理清楚，逻辑很混乱
+            }
+        }
+        return left;
+    }
+
+    public int tool(int[] nums, int threshold, int divisor) {
+        int res = 0;
+        for (int i : nums) {
+            res += i % divisor == 0 ? i / divisor : i / divisor + 1;
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
-        System.out.println("hello");
+        //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
+        System.out.println(new Solution().smallestDivisor(new int[]{1,2,3}, 6));
     }
 
 
