@@ -1736,6 +1736,7 @@ class Node {
 
     /**
      * 695.岛屿的最大面积，方法dfs，关键在于序号标记，因为联通的陆地一定是同一个岛屿，我们用序号标记出来，表示它们被计算过了，方便算出面积
+     *
      * @param grid 地形矩阵，0为海洋，1为陆地
      * @return 最大面积
      */
@@ -1758,6 +1759,7 @@ class Node {
 
     /**
      * 827.最大人工岛，获取海洋格子相邻的岛屿，如果相邻的岛屿有两个，那么当这个海洋格子变成陆地岛屿就会合并
+     *
      * @param grid 地形矩阵
      * @return 最多将一个0变成1，最终最大岛屿的面积
      */
@@ -1794,10 +1796,11 @@ class Node {
 
     /**
      * 获取海洋格子的邻接岛屿
-     * @param grid
-     * @param r
-     * @param c
-     * @return
+     *
+     * @param grid 地形矩阵
+     * @param r row，行
+     * @param c col，列
+     * @return 临界岛屿的序号的集合
      */
     private HashSet<Integer> findNeighbour(int[][] grid, int r, int c) {
         HashSet<Integer> hashSet = new HashSet<>();
@@ -1813,12 +1816,12 @@ class Node {
     }
 
     /**
-     * 求面积
-     * @param grid
-     * @param r
-     * @param c
-     * @param index
-     * @return
+     * 求格子所属岛屿面积
+     * @param grid 地形矩阵
+     * @param r row，行
+     * @param c col，列
+     * @param index 岛屿编号
+     * @return 返回此格子所属岛屿的面积
      */
     private int area(int[][] grid, int r, int c, int index) {
         if (!inArea(grid, r, c)) return 0;
