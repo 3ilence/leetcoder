@@ -1575,10 +1575,51 @@ class Node {
         }
         return res;
     }
-    /*1190.反转每对括号间的子串*/
 
     /**
-     * 反转每对括号间的子串
+     * 200.岛屿数量
+     *
+     * @param grid 地形矩阵
+     * @return 岛屿数量
+     */
+    public int numIslands(char[][] grid) {
+        int index = 2;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == '1') {
+                    traverseIsland(grid, i, j, index++);
+                }
+            }
+        }
+        return (index - 2);
+    }
+
+    /**
+     * 遍历地形矩阵，对属于同一个岛屿的陆地进行标记
+     *
+     * @param grid 地形矩阵
+     * @param i 行号
+     * @param j 列号
+     * @param index 当前岛屿标记
+     */
+    public void traverseIsland(char[][] grid, int i, int j, int index) {
+        grid[i][j] = (char)('0' + index);
+        if (i - 1 >= 0 && grid[i - 1][j] == '1') {
+            traverseIsland(grid, i - 1, j, index);
+        }
+        if (i + 1 < grid.length && grid[i + 1][j] == '1') {
+            traverseIsland(grid, i + 1, j, index);
+        }
+        if (j - 1 >= 0 && grid[i][j - 1] == '1') {
+            traverseIsland(grid, i, j - 1, index);
+        }
+        if (j + 1 < grid[0].length && grid[i][j + 1] == '1') {
+            traverseIsland(grid, i, j + 1, index);
+        }
+    }
+
+    /**
+     * 1190.反转每对括号间的子串
      * @param s
      * @return
      */
