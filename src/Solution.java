@@ -1618,34 +1618,9 @@ class Node {
         }
     }
 
-    /**
-     * 1190.反转每对括号间的子串
-     * @param s
-     * @return
-     */
-    public String reverseParentheses(String s) {
-        int right = 0,left = 0;//左右双指针
-        char[] arr = s.toCharArray();
-        for (; right < s.length(); right++) {
-            if(arr[right] == ')') {
-                left = right;
-                for (;left >= 0; left--) {
-                    if (arr[left] == '(') {
-                        reverse(arr,left + 1,right - 1);
-                        arr[left] = '1';
-                        arr[right] = '1';
-                        break;
-                    }
-                }
-            }
-        }
-        StringBuilder sb = new StringBuilder();
-        for (char c : arr) {
-            if (c != '1')
-                sb.append(c);
-        }
-        return sb.toString();
-    }
+
+
+
 
     /**
      * 反转字符数组arr从start到end位置的字符
@@ -1799,6 +1774,88 @@ class Node {
     }
 
     /**
+     * 749.隔离病毒
+     *
+     * @param isInfected 感染矩阵，1为已感染，0为未感染
+     * @return 返回最终安装的防火墙数目
+     */
+    public int containVirus(int[][] isInfected) {
+        int row = isInfected.length;
+        int col = isInfected[0].length;
+        int index = 2;//给每个病毒区的编号
+        // FIXME 写错了，本来想用list下标表示区域编号，值表示防火墙数目，但是后面发现不行，感觉要这种写法需要用map
+        List<Integer> transmittedNums = new ArrayList<>();
+        transmittedNums.add(0);
+        transmittedNums.add(1);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (isInfected[i][j] == 1) {
+                    transmittedNums.add(index, transmittedNum(isInfected, i, j, index++));
+                }
+            }
+        }
+        // 假设-1是指原来是病毒区域，但是现在被隔离
+        for (int i = 0; i < transmittedNums.size() ; i++) {
+            int targetIndex = Util.leastOfList(transmittedNums);//下标即区域编号
+            int target = transmittedNums.get(targetIndex);
+            transmittedNums.remove(targetIndex);
+        }
+        return 0;
+    }
+
+    /**
+     * 病毒下一回合扩散数，病毒区域的轮廓下一回合会被感染病毒
+     *
+     * @param isInfected 感染矩阵，1为已感染，0为未感染
+     * @param i row
+     * @param j col
+     * @param index 病毒区域编号
+     * @return 该病毒区域下一回合扩散面积
+     */
+    public int transmittedNum(int[][] isInfected, int i, int j, int index ) {
+        int res = 0;
+        int[] row = new int[]{i + 1, i - 1, i, i};
+        int[] col = new int[]{j, j, j +1, j - 1};
+        isInfected[i][j] = index;
+        for (int k = 0; k < 4; k++) {
+            if (inArea(isInfected, row[k], col[k])) {
+                if (isInfected[row[k]][col[k]] == 0) {
+                    res++;
+                } else if (isInfected[row[k]][col[k]] == 1){
+                    res += transmittedNum(isInfected, row[k], col[k], index);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     *
+     * 除了编号为index的病毒区域，其他区域均向外扩散
+     * @param isInfected 感染矩阵
+     * @param index 这回合将被隔离的区域
+     * @param transmittedNum 剩余病毒区域
+     * @return 如果下一回合地图全被感染，返回false
+     */
+    public boolean virusTransmitted(int[][] isInfected, int index, List<Integer> transmittedNum) {
+        int row = isInfected.length;
+        int col = isInfected[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (isInfected[i][j] == index) {
+                    isInfected[i][j] = -1;
+                } else if (isInfected[i][j] == 0 || isInfected[i][j] == -1) {
+                    continue;
+                }
+            }
+        }
+        for (int i = 2; i < transmittedNum.size() - 2; i++) {
+
+        }
+        return false;
+    }
+
+    /**
      * 827.最大人工岛，获取海洋格子相邻的岛屿，如果相邻的岛屿有两个，那么当这个海洋格子变成陆地岛屿就会合并
      *
      * @param grid 地形矩阵
@@ -1913,6 +1970,36 @@ class Node {
     }
 
     /**
+     * 1190.反转每对括号间的子串
+     *
+     * @param s
+     * @return
+     */
+    public String reverseParentheses(String s) {
+        int right = 0,left = 0;//左右双指针
+        char[] arr = s.toCharArray();
+        for (; right < s.length(); right++) {
+            if(arr[right] == ')') {
+                left = right;
+                for (;left >= 0; left--) {
+                    if (arr[left] == '(') {
+                        reverse(arr,left + 1,right - 1);
+                        arr[left] = '1';
+                        arr[right] = '1';
+                        break;
+                    }
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char c : arr) {
+            if (c != '1')
+                sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    /**
      * 1283.使结果不超过阈值的最小除数，二分查找
      *
      * @param nums 被除数数组
@@ -2005,7 +2092,18 @@ class Node {
         return res;
     }
 
-
+    static class Util {
+        public static Integer leastOfList(List<Integer> list) {
+            if (list == null || list.size() == 0) {
+                return null;
+            }
+            int res = 0;
+            for (int i = 1; i < list.size(); i++) {
+                res = list.get(i) < list.get(res) ? i : res;
+            }
+            return res;
+        }
+    }
 
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
