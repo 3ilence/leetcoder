@@ -53,5 +53,12 @@ public class mySort {
             return j;
         }
 
+        public void swap(T[] nums, int i, int j) {
+            T tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
+        }
     }
+
+
 }
