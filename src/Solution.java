@@ -54,6 +54,9 @@ public class Solution {
         int val;
         ListNode next;
         ListNode(int x) { val = x; }
+        ListNode() {
+            super();
+        }
     }
     public int[] reversePrint(ListNode head) {
         Stack<ListNode> s = new Stack<>();
@@ -1605,7 +1608,52 @@ class Node {
     }
 
 
+    /**
+     * 234.回文链表。要求时间O(n)，空间O(1)
+     *
+     * @param head 表头，此表头为val不为空的表头
+     * @return 如果是回文链表返回true
+     */
+    public boolean isPalindrome(ListNode head) {
+        ListNode Head = new ListNode();
+        Head.next = head;
+        ListNode slow = Head, fast = Head;
+        ListNode pre = Head;
+        boolean flag = false;//单数则为true
+        while (fast.next != null) {
 
+            fast = fast.next;
+            if (fast.next != null) {
+                //链表长为双数，且slow位于[left,right]的left
+                fast = fast.next;
+            } else {
+                flag = true;
+            }
+            //否则说明链表长为单数，且slow刚好位于中点
+            //反转链表
+            ListNode tmp = slow.next;
+            slow.next = pre;
+            pre = slow;
+            slow = tmp;
+        }
+        if (flag) {
+            slow = slow.next;
+            while (slow != null && slow.val == pre.val) {
+                slow = slow.next;
+                pre = pre.next;
+            }
+        } else {
+            if (slow.val != slow.next.val)
+                return false;
+            slow = slow.next.next;
+
+            while (slow != null && slow.val == pre.val) {
+                slow = slow.next;
+                pre = pre.next;
+            }
+        }
+        return slow == null ? true : false;
+    }
 
 
     /**
