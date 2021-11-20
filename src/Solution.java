@@ -1,12 +1,11 @@
-import org.w3c.dom.Node;
 
 import java.util.*;
 
 public class Solution {
-/* Leetcode剑指offer第三题*/
+    /* Leetcode剑指offer第三题*/
     /*查找数组中任意一个重复元素*/
         public int findRepeatNumber(int[] nums) {
-            Set<Integer> set = new HashSet<Integer>();
+            Set<Integer> set = new HashSet<>();
             int repeat = -1;
             for(int num : nums) {
                 if(!set.add(num)) {
@@ -16,7 +15,7 @@ public class Solution {
             }
             return repeat;
         }
-/*LeetCode剑指offer第四题*/
+    /*LeetCode剑指offer第四题*/
     /*从有序二维矩阵中查找元素,判断是否含有该元素*/
     /*每一行都从左到右递增，每一列都从上到下递增*/
     public boolean findNumberIn2DArray(int[][] matrix, int target) {
@@ -35,7 +34,7 @@ public class Solution {
         }
     return true;
     }
-/*LeetCode剑指offer第五题*/
+    /*LeetCode剑指offer第五题*/
     /*替换给定字符串中的所有空格为"%20"*/
     public String replaceSpace(String s) {
         StringBuilder res = new StringBuilder();
@@ -51,13 +50,13 @@ public class Solution {
     }
 /*LeetCode剑指Offer第六题*/
     /*输入一个链表的头节点，从尾到头反过来返回每个节点的值（用数组返回）*/
-    class ListNode {
+    static class ListNode {
         int val;
         ListNode next;
         ListNode(int x) { val = x; }
     }
     public int[] reversePrint(ListNode head) {
-        Stack<ListNode> s = new Stack<ListNode>();
+        Stack<ListNode> s = new Stack<>();
         ListNode temp = head;
         while(temp != null) {
             s.push(temp);
@@ -106,7 +105,7 @@ public class Solution {
     }
     public TreeNode buildTree(int[] preorder,int[] inorder) {
         int n = preorder.length;//
-        indexMap = new HashMap<Integer,Integer>();
+        indexMap = new HashMap<>();
         for(int i = 0; i < n; i++) {
             indexMap.put(inorder[i],i);//key是数组值，value是数组下标
         }
@@ -119,8 +118,8 @@ public class Solution {
         Deque<Integer> stack2;
 
         public CQueue() {
-            stack1 = new LinkedList<Integer>();
-            stack2  = new LinkedList<Integer>();
+            stack1 = new LinkedList<>();
+            stack2  = new LinkedList<>();
         }
 
         public void appendTail(int value) {
@@ -138,8 +137,7 @@ public class Solution {
                 return -1;
             }
             else {
-                int deleteItem = stack2.pop();
-                return deleteItem;
+                return stack2.pop();
             }
         }
     }
@@ -241,10 +239,7 @@ public class Solution {
         return maxCutting(n);
     }
     public int max(int a,int b) {
-        if(a > b)
-            return a;
-        else
-            return b;
+        return Math.max(a, b);
     }
     public int maxCutting(int n) {
         if(n == 1)
@@ -304,7 +299,7 @@ public class Solution {
 /*剑指offer第十八题*/
     /*从链表中删除节点*/
     public ListNode deleteNode(ListNode head, int val) {
-        ListNode p1 = head,p2 = head;
+        ListNode p1 = head,p2;
         if(head.val == val)
             return head.next;
         p2 = head.next;
@@ -504,7 +499,7 @@ public class Solution {
     }
 /*剑指offer第二十九题*/
     /*顺时针打印矩阵*/
-    public int[] spiralOreder(int[][] matrix) {
+    public int[] spiralOrder(int[][] matrix) {
         if(matrix.length == 0)
             return new int[0];
         int l = 0,r = matrix[0].length - 1,t = 0,b = matrix.length - 1,x = 0;
@@ -571,8 +566,8 @@ public class Solution {
     public int[] levelOrder(TreeNode root) {
     if(root == null)
         return new int[0];
-    Queue<TreeNode> queue = new LinkedList<TreeNode>();
-    ArrayList<Integer> list = new ArrayList<Integer>();
+    Queue<TreeNode> queue = new LinkedList<>();
+    ArrayList<Integer> list = new ArrayList<>();
     queue.offer(root);
     while(!queue.isEmpty()) {
         TreeNode temp = queue.poll();
@@ -732,7 +727,7 @@ class Node {
         left = _left;
         right = _right;
     }
-};
+}
     Node pre,head;
     public Node treeToDoublyList(Node root) {
         if(root == null)
@@ -988,9 +983,9 @@ class Node {
     }
     public int min(int a,int b,int c) {
         if (a < b) {
-            return a < c?a:c;
+            return Math.min(a,c);
         } else {
-            return b < c?b:c;
+            return Math.min(b,c);
         }
     }
     /*剑指offer第五十题*/
@@ -1198,8 +1193,8 @@ class Node {
 
     /**
      * 剑指offer第58题其1，解法使用滑动窗口或者使用正则表达式"[\\s]"进行单词的分割
-     * @param s
-     * @return
+     * @param s s
+     * @return res
      */
     public static String reverseWords(String s) {
         Stack<String> stack = new Stack<>();
@@ -1271,8 +1266,8 @@ class Node {
 
     /**
      * 剑指offer第60题：n个骰子的点数的概率
-     * @param n
-     * @return
+     * @param n n
+     * @return 概率序列
      */
     public double[] dicesProbability(int n) {
         //（5n + 1)
@@ -1305,7 +1300,7 @@ class Node {
     }
     /**
      * 剑指offer第61题：扑克牌中的顺子
-     * @param nums
+     * @param nums 序号序列
      * @return 如果是顺子则返回true，否则返回false
      */
     public static boolean isStraight(int[] nums) {
@@ -1319,15 +1314,6 @@ class Node {
             }
         }
         int i = 0,pre = 0;
-        while (i < nums.length && nums[i] != 0) {
-            if (pre == nums[i])
-                return false;
-            if (pre != 0 && pre + 1 != nums[i]) {
-                flag--;
-            }
-            if (flag < 0)
-                return false;
-        }
         return true;
     }
 
@@ -1472,7 +1458,7 @@ class Node {
     /**
      * 20.有效的括号，括号匹配
      * @param s 带判断的括号字符串
-     * @return
+     * @return 有效则返回true
      */
     public boolean isValid(String s) {
         if (s.isEmpty())
@@ -1494,8 +1480,8 @@ class Node {
     }
     /**
      * 20.有效的括号，这是过了很久自己独立写的
-     * @param s
-     * @return
+     * @param s 括号字符串
+     * @return 是否有效
      */
     public boolean isValid2(String s) {
         if (s.length() == 0)
@@ -1523,9 +1509,9 @@ class Node {
 
     /**
      * 21.合并有序链表，学习答案的简洁的代码
-     * @param l1
-     * @param l2
-     * @return
+     * @param l1 链表1
+     * @param l2 链表2
+     * @return 合并后的有序链表
      */
     public ListNode mergeTwoLists2(ListNode l1, ListNode l2) {
         ListNode prehead = new ListNode(-1);
@@ -1849,9 +1835,6 @@ class Node {
                 }
             }
         }
-        for (int i = 2; i < transmittedNum.size() - 2; i++) {
-
-        }
         return false;
     }
 
@@ -1972,8 +1955,8 @@ class Node {
     /**
      * 1190.反转每对括号间的子串
      *
-     * @param s
-     * @return
+     * @param s 初始字符串
+     * @return 反转后字符串
      */
     public String reverseParentheses(String s) {
         int right = 0,left = 0;//左右双指针
@@ -2092,6 +2075,62 @@ class Node {
         return res;
     }
 
+    /**
+     * 1521. 找到最接近目标值的函数值，与运算的特点
+     *
+     * @param arr arr
+     * @param target target
+     * @return abs(res - target)
+     */
+    public int closestToTarget(int[] arr, int target) {
+        int ans = Math.abs(arr[0] - target);
+        List<Integer> valid = new ArrayList<>();
+        valid.add(arr[0]);
+        for (int num : arr) {
+            List<Integer> validNew = new ArrayList<>();
+            validNew.add(num);
+            int last = num;
+            ans = Math.min(ans, Math.abs(num - target));
+            for (int prev : valid) {
+                int curr = prev & num;//如果与上这个数之后结果与上次没有变化，那么这个数现在和将来是不被需要的，舍弃，所以其实validNew最终长度只有20不到
+                // 按位与运算中，0 不能变回 1，1可能变为0，所以prev二进制表示中，只有0的位是有效的，如果curr == last代表prev所有的0的位置都被curr包含了
+                if (curr != last) {
+                    validNew.add(curr);
+                    ans = Math.min(ans, Math.abs(curr - target));
+                    last = curr;
+                }
+            }
+            valid = validNew;
+        }
+        return ans;
+    }
+
+    /**
+     * 1477.找两个和为目标值且不重叠的子数组
+     *
+     * @param arr arr
+     * @param target target
+     * @return  res
+     */
+    public int minSumOfLengths(int[] arr, int target) {
+        return 0;
+    }
+
+    public boolean subArrayIsCoincide(int startA, int lengthA, int startB, int lengthB) {
+        if ((startA - startB) * (lengthA - lengthB) < 0 && (startA + lengthA - startB - lengthB >= 0)) {
+            return true;
+        }
+        return false;
+    }
+
+    public int sumOfSubArray(int[] arr, int start, int end) {
+        int sum = 0;
+        for (int i = start; i < Math.min(arr.length, end); i++) {
+            sum += arr[i];
+        }
+        return sum;
+    }
+
     static class Util {
         public static Integer leastOfList(List<Integer> list) {
             if (list == null || list.size() == 0) {
@@ -2107,7 +2146,8 @@ class Node {
 
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
-        System.out.println(new Solution().smallestDivisor(new int[]{1,2,3}, 6));
+        System.out.println(new Solution().closestToTarget(new int[] {
+                9,12,3,7,15}, 5));
     }
 
 
