@@ -1652,9 +1652,33 @@ class Node {
                 pre = pre.next;
             }
         }
-        return slow == null ? true : false;
+        return slow == null ;
     }
 
+    /**
+     * 239.滑动窗口最大值，解法双端队列，类似于单调栈
+     * @param nums 数组
+     * @param k 窗口大小
+     * @return 数组，res[i]表示第i个窗口内的最大值
+     */
+    public int[] maxSlidingWindow2(int[] nums, int k) {
+        Deque<Integer> window = new ArrayDeque<>();
+        int len = nums.length;
+        int[] res = new int[len - k + 1];
+        for (int i = 0; i < len; i++) {
+            while (!window.isEmpty() && nums[window.peekLast()] < nums[i]) {
+                window.pollLast();
+            }
+            window.offerLast(i);
+            while (!window.isEmpty() && window.peekFirst() < i - k + 1) {
+                window.pollFirst();
+            }
+            if (i >= k - 1 && !window.isEmpty()) {
+                res[i-k+1] = nums[window.peekFirst()];
+            }
+        }
+        return res;
+    }
 
     /**
      * 反转字符数组arr从start到end位置的字符
@@ -1673,11 +1697,6 @@ class Node {
             end--;
         }
     }
-    /**/
-    /**/
-    /**/
-    /**/
-    /**/
 
     /**
      * 632.最小区间，给出的是贪心加堆的做法，还可以用滑动窗口，滑动窗口更加巧妙
@@ -1697,7 +1716,7 @@ class Node {
         //通过指针得到列表中的元素，指针右移之后指向的元素一定大于或等于之前的元素。
         int[] next = new int[size];
         //使用最小堆维护 k 个指针指向的元素中的最小值
-        PriorityQueue<Integer> priorityQueue = new PriorityQueue<Integer>(new Comparator<Integer>() {
+        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>(new Comparator<Integer>() {
             public int compare(Integer index1, Integer index2) {
                 //第index个列表的next[index1]指针指向的元素
                 return nums.get(index1).get(next[index1]) - nums.get(index2).get(next[index2]);
@@ -2194,8 +2213,7 @@ class Node {
 
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
-        System.out.println(new Solution().closestToTarget(new int[] {
-                9,12,3,7,15}, 5));
+        System.out.println(new Solution().maxSlidingWindow2(new int[] {1,3,1,2,0,5}, 3));
     }
 
 
