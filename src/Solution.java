@@ -1656,6 +1656,35 @@ class Node {
     }
 
     /**
+     * 236.二叉树的最近公共祖先，自己也是自己的祖先
+     *
+     * @param root 根节点
+     * @param p 指定节点p
+     * @param q 指定节点q
+     * @return p和q的最近公共祖先
+     */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode left = lowestCommonAncestor(root.left,p,q);
+        TreeNode right = lowestCommonAncestor(root.right,p,q);
+        if (root.val == p.val || root.val == q.val) {
+            //有几种情况，一是left和right为null，还有就是left和right有一个不返回null，返回结果一样
+            //这是最关键的，不管root子树下是不是有另一个节点，都会返回root，那何必还要分类讨论
+            return root;
+        } else if (left != null && right != null) {
+            return root;
+        } else if (left != null) {
+            return left;
+        } else if (right != null) {
+            return right;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * 239.滑动窗口最大值，解法双端队列，类似于单调栈
      * @param nums 数组
      * @param k 窗口大小
