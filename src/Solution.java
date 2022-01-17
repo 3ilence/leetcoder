@@ -1686,6 +1686,7 @@ class Node {
 
     /**
      * 239.滑动窗口最大值，解法双端队列，类似于单调栈
+     *
      * @param nums 数组
      * @param k 窗口大小
      * @return 数组，res[i]表示第i个窗口内的最大值
@@ -1724,6 +1725,87 @@ class Node {
             arr[end] = tmp;
             start++;
             end--;
+        }
+    }
+
+    /**
+     * 621.任务调度器。思路是没问题的，但是有一个用例过不了，主要这个用例数据很大，不好调。
+     *
+     * @param tasks 任务列表
+     * @param n 同种任务之间的执行间隔
+     * @return 执行完所有任务需要的最短时间
+     */
+    public int leastInterval(char[] tasks, int n) {
+        int interval = n;
+        //当前可执行的任务队列
+        PriorityQueue<Task> execuable = new PriorityQueue<>();//某种任务剩余得越多优先级越高
+        Set<Character> allTasks = new HashSet<>();
+        Map<Character, Task> map = new HashMap<>();
+        initExecuable(tasks, allTasks, execuable, map);
+        int res = 0;
+        while (!allTasks.isEmpty()) {
+            res++;
+            if (!execuable.isEmpty()) {
+                Task tmp = execuable.peek();
+                tmp.cooldown = n+1;//执行后有冷却
+                execuable.remove(tmp);
+                tmp.num--;//执行完任务数-1
+                if (tmp.num == 0) {
+                    allTasks.remove(tmp.task);
+                }
+            }
+
+            //执行完一个任务之后更新其他种类任务得状态
+            for (Character a : allTasks) {
+                Task task = map.get(a);
+                if (task.cooldown != 0 ) {
+                    task.cooldown--;
+                    if (task.cooldown == 0) {
+                        execuable.add(task);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 初始化剩余任务集合allTasks，当前可执行任务优先队列execuable，char->Task映射的map
+     *
+     * @param tasks 输入的字符数组
+     * @param allTasks 还剩的任务种类
+     * @param execuable 当前可执行任务队列
+     * @param map char->Task映射
+     */
+    public void initExecuable(char[] tasks, Set<Character> allTasks, PriorityQueue<Task> execuable, Map<Character, Task> map) {
+        for (char a : tasks) {
+            if (allTasks.add(a)) {
+                map.put(a, new Task(a, 1, 0));
+                execuable.add(map.get(a));
+            } else {
+                map.get(a).num++;
+            }
+        }
+    }
+
+    class Task implements Comparable{
+        char task;
+        public int cooldown;//该种任务的剩余冷却时间冷却
+        public int num;//该种任务还剩多少个
+
+        public Task(char task, int num, int cooldown) {
+            this.task = task;
+            this.num = num;
+            this.cooldown = cooldown;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if (o instanceof Task) {
+                return  ((Task) o).num - this.num;
+            } else {
+                throw new RuntimeException();
+            }
         }
     }
 
@@ -2242,7 +2324,8 @@ class Node {
 
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
-        System.out.println(new Solution().maxSlidingWindow2(new int[] {1,3,1,2,0,5}, 3));
+        //System.out.println(new Solution().maxSlidingWindow2(new int[] {1,3,1,2,0,5}, 3));
+        System.out.println(new Solution().leastInterval(new char[]{'A','A','A','A','A','A','B','C','D','E','F','G'}, 2));
     }
 
 
