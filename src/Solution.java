@@ -1729,6 +1729,67 @@ class Node {
     }
 
     /**
+     * 538.把二叉搜索树转换为累加树。方法一是反中序遍历，即右中左，用递归实现，很好实现。第二种就是这种笨方法。
+     *
+     * @param root 根节点
+     * @return
+     */
+    public TreeNode convertBST(TreeNode root) {
+        if (root == null || (root.left == null && root.right == null)) {
+            return root;
+        }
+        List<Integer> right = new ArrayList<>();
+        List<Integer> left = new ArrayList<>();
+        TreeNode cur = root.right;
+        inOrderIteration(cur, right);
+        inOrderIteration(root.left, left);
+        //left和right分别是左右子树的中序遍历结果：左根右，符合从小到大顺序
+        List<Integer> list = new ArrayList<>(left);
+        list.add(root.val);
+        list.addAll(right);
+        int[] res = new int[list.size()];
+        int tmp = 0;
+        for (int i = list.size() - 1; i >= 0; i --) {
+            tmp += list.get(i);
+            res[i] = tmp;
+        }
+        // res[i] = list[i] + list[i + 1] + ...+ list[size-1]
+        // 最后以先序遍历的方式一个一个地修改节点的val
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            cur = stack.pop();
+            cur.val = res[list.indexOf(cur.val)];
+            if (cur.right != null) {
+                stack.push(cur.right);
+            }
+            if (cur.left != null) {
+                stack.push(cur.left);
+            }
+        }
+        return root;
+    }
+
+    /**
+     * 二叉树中序遍历结果存到入参List中
+     *
+     * @param cur 根节点
+     * @param list
+     */
+    void inOrderIteration(TreeNode cur, List<Integer> list)  {
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        while (!stack.isEmpty() || cur != null) {
+            while (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            }
+            cur = stack.pop();
+            list.add(cur.val);
+            cur = cur.right;
+        }
+    }
+
+    /**
      * 621.任务调度器。思路是没问题的，但是有一个用例过不了，主要这个用例数据很大，不好调。
      *
      * @param tasks 任务列表

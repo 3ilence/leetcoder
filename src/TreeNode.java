@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 //树的遍历
 public class TreeNode {
@@ -31,26 +33,24 @@ public class TreeNode {
         return;
     }
     /*中序遍历  左中右*/
-    public static void inOrderIteration(TreeNode head) {
-        if (head == null) {
-            return;
-        }
-        TreeNode cur = head;
+    public static void inOrderIteration(TreeNode root) {
+        //左中右
+        List<Integer> res = new ArrayList<>();
+        if (root == null)
+            return ;
         Stack<TreeNode> stack = new Stack<>();
+        TreeNode cur = root;
         while (!stack.isEmpty() || cur != null) {
-            //每次都会遍历直到到达最左子树
-            while (cur != null) {
-                stack.push(cur);//左子树根节点入栈
-                cur = cur.left;//不断深入遍历左节点
+            while(cur != null) {
+                stack.push(cur);
+                cur = cur.left;
             }
-            //此时栈顶前几个是左节点序列
-            TreeNode node = stack.pop();
-            System.out.println(node.val + " ");
-            //打印当前出栈节点的右子树，这样就是左中右的顺序
-            if(node.right != null) {
-                cur = node.right;
-            }
+            cur = stack.pop();
+            res.add(cur.val);
+            cur = cur.right;
         }
+
+        return ;
     }
     /*后序遍历*/
     /*双栈实现*/
