@@ -1729,6 +1729,96 @@ class Node {
     }
 
     /**
+     * 438.找到字符串中所有字母异位词。方法是滑动窗口，用数组记录状态，时间复杂度O(n)，空间复杂度O(n)
+     *
+     * @param s 字符串
+     * @param p 字符串
+     * @return 异位词构成的列表
+     */
+    public List<Integer> findAnagrams(String s, String p) {
+        if (s.length() < p.length()) {
+            return new ArrayList<Integer>();
+        }
+        Set<Character> set = new HashSet<>();//set包含了设计的字符，对于不涉及的字符，我们不对相应下标的reference做改变
+        List<Integer> res = new ArrayList<>();
+        int[] reference = new int[26];//如果reference数组不全为0，说明不是字母异位词
+        int sum = 0;//sum是reference中所有元素和
+        int num = 0;//reference中负数个数
+        // 当reference数组全都是0的时候说明此时滑动窗口中是异位词，但是不可能每次都遍历数组来判断，借助sum+num来判断是否满足
+        for (int i = 0; i < p.length(); i++) {
+            reference[p.charAt(i) - 'a']++;
+            set.add(p.charAt(i));
+            sum++;
+        }
+        int len = p.length();
+        int index = 0;
+        for (int i = 0; i < len; i++) {
+            index = s.charAt(i) - 'a';
+            if (set.contains(s.charAt(i))) {
+                reference[index]--;
+                if (reference[index] == -1 ) {
+                    num++;
+                }
+                sum--;
+            }
+        }
+        if (sum == 0 && num == 0) {
+            res.add(0);
+        }
+        for (int i = 1; i <= s.length() - len; i++) {
+            if (set.contains(s.charAt(i - 1))) {
+                sum++;
+                if (reference[s.charAt(i - 1) - 'a'] == -1)
+                    num--;
+                reference[s.charAt(i - 1) - 'a']++;
+            }
+            index = s.charAt(i + len - 1) - 'a';
+            if (set.contains(s.charAt(i + len - 1))) {
+                reference[index]--;
+                if (reference[index] == -1 ) {
+                    num++;
+                }
+                sum--;
+            }
+            if (sum == 0 && num == 0) {
+                res.add(i);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 494.目标和。很巧妙把问题转换为在数组里取n个数使得和为target'
+     *
+     * @param nums 源数组
+     * @param target 目标
+     * @return 满足条件的结果个数
+     */
+    public int findTargetSumWays(int[] nums, int target) {
+        int len = nums.length;
+        int sum = 0;
+        for (int i = 0; i < len; i++) {
+            sum += nums[i];
+        }
+        if (sum - target < 0 || (sum - target) % 2 != 0) {
+            return 0;
+        }
+
+        int n = (sum - target) / 2;
+        int[][] dp = new int[len+1][n+1];//dp[i][j]，表示前i个数里选取的负数和为j
+        dp[0][0] = 1;
+        for (int i = 1; i <= len; i++ ) {
+            for (int j = 0; j <= n; j++) {
+                if (j >= nums[i - 1])
+                    dp[i][j] = dp[i-1][j - nums[i-1]] + dp[i-1][j];
+                else
+                    dp[i][j] = dp[i-1][j];
+            }
+        }
+        return dp[len][n];
+    }
+
+    /**
      * 538.把二叉搜索树转换为累加树。方法一是反中序遍历，即右中左，用递归实现，很好实现。第二种就是这种笨方法。
      *
      * @param root 根节点
@@ -2386,7 +2476,8 @@ class Node {
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
         //System.out.println(new Solution().maxSlidingWindow2(new int[] {1,3,1,2,0,5}, 3));
-        System.out.println(new Solution().leastInterval(new char[]{'A','A','A','A','A','A','B','C','D','E','F','G'}, 2));
+        System.out.println(new Solution().findAnagrams("abacbabc",
+                "abc"));
     }
 
 
