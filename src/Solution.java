@@ -1566,6 +1566,55 @@ class Node {
     }
 
     /**
+     * 34.在排序数组中查找元素的第一个和最后一个位置
+     * @param nums 数组
+     * @param target 目标值
+     * @return target在数组中的起始下标组成的长为2的数组
+     */
+    public int[] searchRange(int[] nums, int target) {
+        int length = nums.length;
+        if (length == 1 ) {
+            return target == nums[0] ? new int[]{0,0} : new int[]{-1,-1};
+        }
+        int l = 0, r = length - 1;
+        int mid = 0;
+        int leftBound = -2;//-1是有可能被leftBound取到的，比如[2,2],2，它的左边界就是-1
+        //求上边界
+        while (l <= r) {
+            mid = l + (r - l ) / 2;
+            if (nums[mid] < target) {
+                l = mid + 1;//对于不等于的情况和一般二分法处理类似
+            } else if (nums[mid] > target) {
+                r = mid - 1;//对于不等于的情况和一般二分法处理类似
+            } else if (nums[mid] == target) {
+                //关键在相等的时候更新左边界为当前mid-1，并且缩小范围：r = mid - 1，进一步在mid左边去找target，如果mid已经是最左的target了，那么leftBound也不会在变动
+                leftBound = mid - 1;
+                r = mid - 1;
+            }
+        }
+        if (leftBound == -2) {
+            //说明数组中有target
+            return new int[] {-1, -1};
+        }
+        int rightBound = 0;
+        l = 0;
+        r = length - 1;
+        // 找右边界与找左边界十分类似，唯一不同地方在于nums[mid] == target的时候我们向右缩小范围，因为找最右边的target
+        while (l <= r) {
+            mid = l + (r - l) / 2;
+            if (nums[mid] < target) {
+                l = mid + 1;
+            } else if (nums[mid] > target) {
+                r = mid - 1;
+            } else {
+                rightBound = mid + 1;
+                l = mid + 1;
+            }
+        }
+        return new int[] {leftBound+1, rightBound - 1};
+    }
+
+    /**
      * 200.岛屿数量
      *
      * @param grid 地形矩阵
@@ -1726,6 +1775,47 @@ class Node {
             start++;
             end--;
         }
+    }
+
+    /**
+     * 437.路径总和 III。求路径和为target的路径个数。这是题解里的，自己写的又长又没过。泪目了。题解代码真的很清晰。
+     *
+     * @param root 树的根节点
+     * @param targetSum 目标和
+     * @return 路径数目
+     */
+    public int pathSum(TreeNode root, int targetSum) {
+        if (root == null) {
+            return 0;
+        }
+
+        int ret = rootSum(root, targetSum);
+        ret += pathSum(root.left, targetSum);
+        ret += pathSum(root.right, targetSum);
+        return ret;
+    }
+
+    /**
+     * 包含root的路径和为target的路径个数
+     *
+     * @param root 根节点
+     * @param targetSum 目标和
+     * @return 路径个数
+     */
+    public int rootSum(TreeNode root, int targetSum) {
+        int ret = 0;
+
+        if (root == null) {
+            return 0;
+        }
+        int val = root.val;
+        if (val == targetSum) {
+            ret++;
+        }
+
+        ret += rootSum(root.left, targetSum - val);
+        ret += rootSum(root.right, targetSum - val);
+        return ret;
     }
 
     /**
@@ -2476,8 +2566,9 @@ class Node {
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
         //System.out.println(new Solution().maxSlidingWindow2(new int[] {1,3,1,2,0,5}, 3));
-        System.out.println(new Solution().findAnagrams("abacbabc",
-                "abc"));
+        for (int a : new Solution().searchRange(new int[]{5,7,7,8,8,10}, 8)) {
+            System.out.println(a);
+        }
     }
 
 
