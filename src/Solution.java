@@ -1615,6 +1615,27 @@ class Node {
     }
 
     /**
+     * 69. x 的平方根
+     * @param x
+     * @return x的平方根下取整
+     */
+    public int mySqrt(int x) {
+        int l = 0, r = x;
+        int mid = 0;
+        int ans = -1;
+        while (l <= r) {
+            mid = l + (r - l) / 2;
+            if ((long) mid * mid <= x) {    //这里要将第一个mid强转为long，不然会出现int越界
+                ans = mid;
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        return ans;
+    }
+
+    /**
      * 200.岛屿数量
      *
      * @param grid 地形矩阵
@@ -1757,6 +1778,26 @@ class Node {
             }
         }
         return res;
+    }
+
+    /**
+     * 367. 有效的完全平方数。二分
+     * @param num num
+     * @return 如果是完全平方数返回true，否则返回false
+     */
+    public boolean isPerfectSquare(int num) {
+        int l = 1, r = num, mid = 0;
+        while (l <= r) {
+            mid = l + (r - l) / 2;
+            if ((long) mid * mid > num) {
+                r = mid - 1;
+            } else if ((long) mid * mid < num) {
+                l = mid + 1;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
