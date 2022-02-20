@@ -1566,6 +1566,43 @@ class Node {
     }
 
     /**
+     * 26. 删除有序数组中的重复项。删除重复项同时保持元素相对顺序不变。
+     * @param nums nums
+     * @return 最终得到的数组长度
+     */
+    public int removeDuplicates(int[] nums) {
+        int index = 0;//左右分界线
+        for (int i = 0; i < nums.length;i++) {
+            while (i < nums.length - 1 && nums[i] == nums[i + 1]) {
+                i++;
+            }
+            nums[index++] = nums[i];
+        }
+        return index;
+    }
+
+    /**
+     * 27. 移除元素。移除数组指定元素同时保持其余元素相对顺序不变
+     * @param nums nums
+     * @param val val
+     * @return 最终得到的数组长度
+     */
+    public int removeElement(int[] nums, int val) {
+        int slow = 0, fast = 0;//fast指向最近一个非val，slow指向非val的尾部
+        int len = nums.length;
+        while (fast < len) {
+            while (fast < len && nums[fast] == val) {
+                fast++;
+            }
+            if (fast < len) {
+                nums[slow++] = nums[fast];
+                fast++;
+            }
+        }
+        return slow;
+    }
+
+    /**
      * 34.在排序数组中查找元素的第一个和最后一个位置
      * @param nums 数组
      * @param target 目标值
@@ -1778,6 +1815,25 @@ class Node {
             }
         }
         return res;
+    }
+
+    /**
+     * 283.移动零。将数组中的0都移动到末尾，并保持其余元素相对位置不变。双指针
+     * @param nums nums
+     */
+    public void moveZeroes(int[] nums) {
+        int len = nums.length;
+        int fast = 0;//i左边全部非0（不包括i)，fast是下标i右边第一个非0
+        for (int i = 0; fast < len; i++,fast++) {
+            // 每次先寻找i右边第一个非0，如果fast>=len表明i右边全是0，即移动完成
+            while (fast < len && nums[fast] == 0) {
+                fast++;
+            }
+            if (fast < len && nums[i] == 0) {
+                nums[i] = nums[fast];
+                nums[fast] = 0;
+            }
+        }
     }
 
     /**
@@ -2377,6 +2433,57 @@ class Node {
     }
 
     /**
+     * 844. 比较含退格的字符串。#表示退格，即delete。比较两个可能包含#的字符串s，t是否相等。从后往前遍历的双指针，因为#删除的是#左边的字母，从右往左才能知道最终有效的是哪个字符
+     * @param s s
+     * @param t t
+     * @return 如果内容相等返回true
+     */
+    public boolean backspaceCompare(String s, String t) {
+        int p1 = s.length() - 1, p2 = t.length() - 1;
+        char a , b;
+        while (p1 >= 0 || p2 >= 0) {
+            p1 = effectiveChar(s, p1) ;
+            if (p1 != -2)
+                a = s.charAt(p1 + 1);
+            else
+                a = 'A';
+            p2 = effectiveChar(t, p2);
+            if (p2 != -2)
+                b = t.charAt(p2 + 1);
+            else
+                b = 'A';
+            if ( a != b) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 返回可能包含退格符#的字符串下标index左边最近的字符的下标，如果为空白返回-2
+     * @param s s
+     * @param index index
+     * @return 从右向左遍历，返回下标index左边第一个有效字符的下标。所谓有效就是该字母最终没有被退格。
+     */
+    public int effectiveChar(String s, int index) {
+        int count1 = 0, count2 = 0;
+        int p = index;//指针位置
+        while (p >= 0 && count1 >= count2) {
+            if (s.charAt(p) == '#') {
+                count1++;
+            } else {
+                count2++;
+            }
+            p--;
+        }
+        if (count1 < count2 ) {
+             return p;
+        } else {
+            return  -2;//表明为空
+        }
+    }
+
+    /**
      * 862.和至少为k的最短子数组
      *
      * @param nums
@@ -2410,6 +2517,71 @@ class Node {
             }
         }
         return res;
+    }
+
+    /**
+     * 977. 有序数组的平方。一个可能包含负数的非递减数组，返回其对应的非递减成员的平方组成的数组。要求时间复杂度O(n)
+     * @param nums nums
+     * @return [-2,1,3] -> [1,4,9]
+     */
+    public int[] sortedSquares(int[] nums) {
+        //首先找到中点，再从中点向左右沿申
+        int left = findMid(nums);
+        int[] res = new int[nums.length];
+        if (left < 0) {// left小于0表明nums中没有小于0的元素
+            for (int i = 0; i < nums.length; i++) {
+                res[i] = nums[i] * nums[i];
+            }
+        } else {
+            int i = 0;
+            int a , b ;
+            int right = left + 1;//左右双指针，right向右，left向左
+            while (left >= 0 || right < nums.length) {
+                if (left >= 0)
+                    a = nums[left] * nums[left];
+                else
+                    a = Integer.MAX_VALUE;
+                if (right < nums.length)
+                    b = nums[right] * nums[right];
+                else
+                    b = Integer.MAX_VALUE;
+                if (a < b) {
+                    res[i] = a;
+                    left--;
+                } else {
+                    res[i] = b;
+                    right++;
+                }
+                i++;
+            }
+        }
+        return res;
+    }
+
+
+    /**
+     * 返回非递减数组中第一个小于0成员的下标
+     * @param nums nums
+     * @return
+     */
+    public int findMid(int[] nums) {
+        //找第一个小于0的，如果没有就应该是-1了
+        int l = 0, r = nums.length - 1;
+        int mid;
+        int leftBound = -1;
+        while (l <= r) {
+            mid = l + (r - l) / 2;
+            if (nums[mid] < 0) {
+                l = mid + 1;
+                leftBound = mid;//之前少了这个，导致错误。我们是要找第一个小于0，所以只要遇到小于0的时候就能更新leftBound，毕竟mid是我们目前知道的最接近0的负数，之后再往mid的右边去找
+            } else if (nums[mid] > 0) {
+                r = mid - 1;
+            } else {
+                leftBound = mid - 1;
+                r = mid - 1;
+            }
+        }
+        return leftBound;//如果返回负数表示数组非负
     }
 
     /**
@@ -2607,7 +2779,7 @@ class Node {
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
         //System.out.println(new Solution().maxSlidingWindow2(new int[] {1,3,1,2,0,5}, 3));
-        for (int a : new Solution().searchRange(new int[]{5,7,7,8,8,10}, 8)) {
+        for (int a : new Solution().sortedSquares(new int[]{-7,-3,2,3,11})) {
             System.out.println(a);
         }
     }
