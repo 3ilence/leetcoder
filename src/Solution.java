@@ -1,4 +1,6 @@
 
+import org.w3c.dom.css.Counter;
+
 import java.util.*;
 
 public class Solution {
@@ -1673,6 +1675,145 @@ class Node {
     }
 
     /**
+     * 76. 最小覆盖子串。滑动窗口+哈希表
+     * @param s s
+     * @param t t
+     * @return 找出s中包含了t中所有字母的最短字串，没有返回""
+     */
+    public String minWindow(String s, String t) {
+        if (s == null || s == "" || t == null || t == "" || s.length() < t.length()) {
+            return "";
+        }
+        // 滑动窗口，固定右边界，收缩时移动左边界
+        int len = s.length();
+        int l = 0, r = 0;
+        int sum = t.length();
+        int res = Integer.MAX_VALUE;
+        int[] index = new int[2];
+        Map<Character, Integer> map = new HashMap<>();
+        Set<Character> set = new HashSet<>();
+        for (int i = 0; i < t.length(); i++) {
+            char a = t.charAt(i);
+            set.add(a);
+            if (map.containsKey(a)) {
+                map.put(a,map.get(a) + 1);
+            } else {
+                map.put(a, 1);
+            }
+        }
+        //窗口滑动的过程中，如果map的size归0，表示符合
+        while (r < len) {
+            char a = s.charAt(r);
+            if (set.contains(a)) {
+                // 对于非目标的字符我们不予处理
+                map.put(a, map.get(a) - 1);
+                sum--;//sum大于0的时候不可能满足条件
+            }
+            r++;
+            if (sum <= 0) {
+                boolean is = true;
+                for (Character c : map.keySet()) {
+                    if (map.get(c) > 0) {
+                        is = false;
+                        break;
+                    }
+                }
+                while(is &&l <= r) {
+                    a = s.charAt(l);
+                    if (set.contains(a) && map.get(a) != 0) {
+                        map.put(a, map.get(a) + 1);
+                        sum++;
+                    } else if (set.contains(a) && map.get(a) == 0) {
+                        map.put(a, map.get(a) + 1);
+                        sum++;
+                        if (res > r - l) {
+                            res = r - l;
+                            index[0] = l;
+                            index[1] = r;
+                        }
+                        l++;//因为此时该字串的最短字串已经得到了，要去找下一个字串
+                        break;
+                    }
+                    l++;
+                }
+                //寻找下一个满足条件的字串
+            }
+        }
+        return  res == Integer.MAX_VALUE ? "" : s.substring(index[0], index[1]);
+    }
+
+    /**
+     * 76. 最小覆盖子串
+     * @param s s
+     * @param t t
+     * @return 找出s中包含了t中所有字母的最短字串，没有返回""
+     */
+    public String minWindow2(String s, String t) {
+        if (s == null || s == "" || t == null || t == "" || s.length() < t.length()) {
+            return "";
+        }
+        //维护两个数组，记录已有字符串指定字符的出现次数，和目标字符串指定字符的出现次数
+        //ASCII表总长128
+        int[] need = new int[128];
+        int[] have = new int[128];
+
+        //将目标字符串指定字符的出现次数记录
+        for (int i = 0; i < t.length(); i++) {
+            need[t.charAt(i)]++;
+        }
+
+        //分别为左指针，右指针，最小长度(初始值为一定不可达到的长度)
+        //已有字符串中目标字符串指定字符的出现总频次以及最小覆盖子串在原字符串中的起始位置
+        int left = 0, right = 0, min = s.length() + 1, count = 0, start = 0;
+        while (right < s.length()) {
+            char r = s.charAt(right);
+            // 对于t中没有的字符不予处理
+            if (need[r] == 0) {
+                right++;
+                continue;
+            }
+            //当且仅当已有字符串目标字符出现的次数小于目标字符串字符的出现次数时，count才会+1
+            //是为了后续能直接判断已有字符串是否已经包含了目标字符串的所有字符，不需要挨个比对字符出现的次数
+            if (have[r] < need[r]) {
+                count++;
+            }
+            //已有字符串中目标字符出现的次数+1
+            have[r]++;
+            //移动右指针
+            right++;
+            //当且仅当已有字符串已经包含了所有目标字符串的字符，且出现频次一定大于或等于指定频次
+            while (count == t.length()) {
+                //挡窗口的长度比已有的最短值小时，更改最小值，并记录起始位置
+                if (right - left < min) {
+                    min = right - left;
+                    start = left;
+                }
+                char l = s.charAt(left);
+                //如果左边即将要去掉的字符不被目标字符串需要，那么不需要多余判断，直接可以移动左指针
+                if (need[l] == 0) {
+                    left++;
+                    continue;
+                }
+                //如果左边即将要去掉的字符被目标字符串需要，且出现的频次正好等于指定频次，那么如果去掉了这个字符，
+                //就不满足覆盖子串的条件，此时要破坏循环条件跳出循环，即控制目标字符串指定字符的出现总频次(count）-1
+                if (have[l] == need[l]) {
+                    count--;
+                }
+                //已有字符串中目标字符出现的次数-1
+                have[l]--;
+                //移动左指针
+                left++;
+            }
+        }
+        //如果最小长度还为初始值，说明没有符合条件的子串
+        if (min == s.length() + 1) {
+            return "";
+        }
+        //返回的为以记录的起始位置为起点，记录的最短长度为距离的指定字符串中截取的子串
+        return s.substring(start, start + min);
+    }
+
+    /**
      * 200.岛屿数量
      *
      * @param grid 地形矩阵
@@ -1714,6 +1855,75 @@ class Node {
         }
     }
 
+    /**
+     * 209. 长度最小的子数组。双指针解法。
+     * @param target 目标和
+     * @param nums nums
+     * @return 连续的和不小于target的子数组长度
+     */
+    public int minSubArrayLen(int target, int[] nums) {
+        int len = nums.length;
+        int res = Integer.MAX_VALUE;
+        int l = 0, r = 0;
+        int sum = nums[0];
+        while (l < len) {
+            if (sum < target) {
+                r++;
+                if (r < len)
+                    sum += nums[r];
+                else
+                    break;//从l到后面所有数和都小于target
+
+            } else if (sum >= target) {
+                if (res > r - l + 1)
+                    res = r - l + 1;
+                if (res == 1)
+                    return res;//没有比1更小的正数了
+                sum -= nums[l];
+                l++;
+                while (sum >= target) {
+                    sum -= nums[r];
+                    r--;
+                }
+            }
+        }
+        return res == Integer.MAX_VALUE ? 0 : res;
+
+    }
+
+    /**
+     * 209. 长度最小的子数组。前缀和+二分。O(nlog(n))
+     * @param s 目标和
+     * @param nums nums
+     * @return 连续的和不小于target的子数组长度
+     */
+    public int minSubArrayLen2(int s, int[] nums) {
+        int n = nums.length;
+        if (n == 0) {
+            return 0;
+        }
+        int ans = Integer.MAX_VALUE;
+        int[] sums = new int[n + 1];
+        // 为了方便计算，令 size = n + 1
+        // sums[0] = 0 意味着前 0 个元素的前缀和为 0
+        // sums[1] = A[0] 前 1 个元素的前缀和为 A[0]
+        // 以此类推
+        for (int i = 1; i <= n; i++) {
+            sums[i] = sums[i - 1] + nums[i - 1];
+        }
+        for (int i = 1; i <= n; i++) {
+            int target = s + sums[i - 1];//寻找sums[j]，使得sums[j] - sums[i - 1] >= s。
+            int bound = Arrays.binarySearch(sums, target);
+            if (bound < 0) {
+                // 前缀和数组是单调递增的，如果找到了的话肯定是唯一的，返回值也为正。如果返回值为负，也能反推出前缀和数组中第一个大于target的下标
+                bound = -bound - 1;
+            }
+            if (bound <= n) {
+                ans = Math.min(ans, bound - (i - 1));
+            }
+        }
+        return ans == Integer.MAX_VALUE ? 0 : ans;
+    }
 
     /**
      * 234.回文链表。要求时间O(n)，空间O(1)
@@ -2520,6 +2730,77 @@ class Node {
     }
 
     /**
+     * 904. 水果成篮。fruits代表一排果树的种类。你只有两个篮子，每个篮子装同种水果，求最终能采摘水果数量最大值。
+     * @param fruits fruits
+     * @return 最多采摘的水果数量。
+     */
+    public int totalFruit(int[] fruits) {
+        Set<Integer> set = new HashSet<>();
+        int res = 0;
+        int l = 0, r = 0;//从第l个树开始摘
+        int len = fruits.length;
+        while (l < len && res < len - l + 1) {
+            set.clear();
+            int tmp = 0;
+            r = l;
+            while (r < len) {
+                if (set.size() < 2 && !set.contains(fruits[r])) {
+                    set.add(fruits[r]);
+                }
+                if (set.contains(fruits[r])) {
+                    tmp++;
+                    res = Math.max(res, tmp);
+                }
+                if (!set.contains(fruits[r]) && set.size() == 2) {
+                    break;
+                }
+                r++;
+            }
+            while (fruits[l] == fruits[l+1]) {
+                l++;
+            }//这个循环是必要的，能够提高这种暴力解法的效率
+            l++;
+        }
+        return res;
+    }
+
+    /**
+     * 904. 水果成篮。前面的解答其实就是普通的暴力，我一开始还以为那也是滑动窗口。
+     * @param fruits fruits
+     * @return 最多采摘的水果数量。
+     */
+    public int totalFruit2(int[] fruits) {
+        // 滑动窗口解这题应该是这样的，维护一个窗口，窗口内应该只有两种数字，目的是使得这个窗口最大
+        // 一个比较关键点就是同种类的数字不一定连续，左边移动的时候不好移动
+        // 窗口扩大的时候肯定会遇到窗口内数字超过三种，这时候就要从右边界往左数，第三种数字要被去掉，这样保证新窗口最大，那么这时候左边界怎么变动
+        // 假设要除去的数字为s，一个想法是左边界变为最后一个s+1，毕竟是左闭右闭的窗口，但是实际写起来并不好处理
+        // 最终采用了题解解法
+        int ans = 0, i = 0;
+        Counter count = new Counter();
+        for (int j = 0; j < fruits.length; ++j) {
+            count.add(fruits[j], 1);
+            while (count.size() >= 3) {
+                count.add(fruits[i], -1);
+                if (count.get(fruits[i]) == 0)
+                    count.remove(fruits[i]);
+                i++;
+            }
+            ans = Math.max(ans, j - i + 1);
+        }
+        return ans;
+    }
+
+    class Counter extends HashMap<Integer, Integer> {
+        public int get(int k) {
+            return containsKey(k) ? super.get(k) : 0;
+        }
+
+        public void add(int k, int v) {
+            put(k, get(k) + v);
+        }
+    }
+
+    /**
      * 977. 有序数组的平方。一个可能包含负数的非递减数组，返回其对应的非递减成员的平方组成的数组。要求时间复杂度O(n)。脑残了，找中心点是不必要的，直接从最左和最右开始，从大往小填，反正数组长度是已知的。
      * @param nums nums
      * @return [-2,1,3] -> [1,4,9]
@@ -2779,9 +3060,11 @@ class Node {
     public static void main(String[] args) {
         //System.out.println(new Solution().shortestSubarray(new int[]{2,-1,2}, 3));
         //System.out.println(new Solution().maxSlidingWindow2(new int[] {1,3,1,2,0,5}, 3));
+        new Solution().minSubArrayLen(6, new int[] {10,2,3});
         for (int a : new Solution().sortedSquares(new int[]{-7,-3,2,3,11})) {
             System.out.println(a);
         }
+        System.out.println(new Solution().minWindow("ab", "a"));
     }
 
 
