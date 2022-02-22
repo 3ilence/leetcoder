@@ -1,4 +1,5 @@
 
+import com.sun.source.tree.Tree;
 import org.w3c.dom.css.Counter;
 
 import java.util.*;
@@ -1539,33 +1540,7 @@ class Node {
         return prehead.next;
     }
     /*145.二叉树的后序遍历*/
-    public List<Integer> postorderTraversal(TreeNode root) {
-        List<Integer> res = new ArrayList<Integer>();
-        if (root == null) {
-            return res;
-        }
 
-        Deque<TreeNode> stack = new LinkedList<TreeNode>();
-        TreeNode prev = null;
-        while (root != null || !stack.isEmpty()) {
-            while (root != null) {
-                stack.push(root);
-                root = root.left;
-            }
-            root = stack.pop();
-            /*如果右子树为空或者已经访问过了才访问根结点
-            否则，需要将该结点再次压回栈中，去访问其右子树*/
-            if (root.right == null || root.right == prev) {
-                res.add(root.val);
-                prev = root;
-                root = null;
-            } else {
-                stack.push(root);
-                root = root.right;
-            }
-        }
-        return res;
-    }
 
     /**
      * 26. 删除有序数组中的重复项。删除重复项同时保持元素相对顺序不变。
@@ -1654,47 +1629,70 @@ class Node {
     }
 
     /**
+     * 54. 螺旋矩阵
+     * @param matrix
+     * @return
+     */
+    public List<Integer> spiralOrder2(int[][] matrix) {
+        int m = matrix.length, n = matrix[0].length;
+        List<Integer> res = new ArrayList<>();
+        int index = 0;
+        int l = 0,r = n - 1,t = 1,d = m - 1;//左右上下边界
+        int row = 0, column = 0;
+        while (index < m * n) {
+            //右
+            while (column <= r) {
+                res.add(matrix[row][column++]);
+                index++;
+            }
+            column--;row++;
+            r--;
+            while (row <= d) {
+                res.add(matrix[row++][column]);
+                index++;
+            }
+            row--;column--;
+            d--;
+            while (column >= l) {
+                res.add(matrix[row][column--]);
+                index++;
+            }
+            column++;row--;
+            l++;
+            while (row >= t) {
+                res.add(matrix[row--][column]);
+                index++;
+            }
+            row++;column++;
+            t++;
+        }
+        while (index > m * n) {
+            res.remove(index - 1);
+            index--;
+        }
+        return res;
+    }
+
+    /**
      * 59. 螺旋矩阵 II
      * @param n n
      * @return 返回一个n维矩阵，该矩阵元素为1->n的平方
      */
     public int[][] generateMatrix(int n) {
-        int[][] res = new int[n][n];
-        // 向右，向下，向左，向上，向右
-        int i = 0, j = 0;
-        int cur = 1;
-        int index = 0;
-        while (true) {
-            res[i][j] = cur++;
-            if (cur == n * n + 1) {
-                break;
-            }
-            if ((index == 1 &&i == n - 1) || (index == 0 && j == n - 1) || (index == 2 && j == 0)) {
-                index = (index + 1) % 4;
-            }
-            if (i - 1 >= 0 && index == 3 && res[i - 1][j] != 0) {
-                index = 0;
-            }
-            if (j + 1 < n && index == 0 && res[i][j + 1] != 0) {
-                index = 1;
-            }
-            if (i + 1 < n && index == 1 && res[i + 1][j] != 0) {
-                index = 2;
-            }
-            if (j - 1 >= 0 && index == 2 && res[i][j - 1] != 0) {
-                index = 3;
-            }
-            if (index == 0) {
-                j++;
-            } else if(index == 1) {
-                i++;
-            } else if (index == 2) {
-                j--;
-            } else {
-                i--;
-            }
+        int l = 0, r = n - 1, t = 0, b = n - 1;//左右上下边界
+        int[][] mat = new int[n][n];
+        int num = 1, tar = n * n;
+        while(num <= tar){
+            for(int i = l; i <= r; i++) mat[t][i] = num++; // left to right.
+            t++;
+            for(int i = t; i <= b; i++) mat[i][r] = num++; // top to bottom.
+            r--;
+            for(int i = r; i >= l; i--) mat[b][i] = num++; // right to left.
+            b--;
+            for(int i = b; i >= t; i--) mat[i][l] = num++; // bottom to top.
+            l++;
         }
-        return res;
+        return mat;
     }
 
     /**
@@ -1884,6 +1882,119 @@ class Node {
     }
 
     /**
+     * 94. 二叉树的中序遍历
+     * @param root 根节点
+     * @return 中序遍历序列
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        //左根右
+        List<Integer> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        while (!stack.isEmpty() || root != null) {
+            // 找到最左节点
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            res.add(root.val);//root，根记为a。遍历完根下一个是右子树
+            //遍历根的右子树时只需直接赋就行，不用管右子树是否为空
+            // 假如为空，那么在下一轮迭代中就会直接用栈顶的树，即该根的根，记为b。a是b的左子树，b是a的根
+            // 假如不为空，那么在下一轮迭代中会寻找a的右子树的最左节点。重复操作
+            root = root.right;
+        }
+        return res;
+    }
+
+    /**
+     * 144. 二叉树的前序遍历
+     * @param root 根节点
+     * @return 前序遍历序列
+     */
+    public List<Integer> preorderTraversal(TreeNode root) {
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        List<Integer> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        stack.add(root);
+        while (!stack.isEmpty()) {
+            root = stack.pop();
+            res.add(root.val);
+            // 右子树先进栈，左子树后进。这样才能左子树先出栈，先处理。最终根左右
+            if (root.right != null) {
+                stack.push(root.right);
+            }
+            if (root.left != null) {
+                stack.push(root.left);
+            }
+        }
+        return res;
+    }
+
+    /**
+     *145. 二叉树的后序遍历。左右根，根右左翻转后就是左右根。即将前序稍微变动，最后将列表翻转即可。
+     * @param root 根节点
+     * @return 后序遍历序列
+     */
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        //左右中
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            root = stack.pop();
+            res.add(root.val);
+            if (root.left != null) {
+                stack.push(root.left);
+            }
+            if (root.right != null) {
+                stack.push(root.right);
+            }
+        }
+        Collections.reverse(res);
+        return res;
+    }
+
+    /**
+     * 145. 二叉树的后序遍历。左右根，正经流程遍历，非投机取巧，个人觉得有点复杂。
+     * @param root 根节点
+     * @return 后序遍历序列
+     */
+    public List<Integer> postorderTraversal2(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (root == null) {
+            return res;
+        }
+        Deque<TreeNode> stack = new LinkedList<>();
+        TreeNode prev = null;
+        while (root != null || !stack.isEmpty()) {
+            //和中根类似，还是先找到最左根节点
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();//root为根，因为是左右根，root左子树为空，或者root左子树已经遍历过。
+            //如果右子树为空或者已经访问过了才访问根结点否则，需要将该结点再次压回栈中，去访问其右子树
+            if (root.right == null || root.right == prev) {
+                res.add(root.val);
+                prev = root;
+                root = null;
+            } else {
+                stack.push(root);
+                root = root.right;
+            }
+        }
+        return res;
+    }
+
+    /**
      * 200.岛屿数量
      *
      * @param grid 地形矩阵
@@ -1923,6 +2034,30 @@ class Node {
         if (j + 1 < grid[0].length && grid[i][j + 1] == '1') {
             traverseIsland(grid, i, j + 1, index);
         }
+    }
+
+    /**
+     * 203. 移除链表元素
+     * @param head 表头
+     * @param val 将被移除的元素
+     * @return 移除完成后链表新表头
+     */
+    public ListNode removeElements(ListNode head, int val) {
+        while (head != null && head.val == val) {
+            head = head.next;
+        }
+        if (head == null) {
+            return head;
+        }
+        ListNode tmp = head;
+        while (head.next != null) {
+            if (head.next.val == val) {
+                head.next = head.next.next;
+            } else {
+                head = head.next;
+            }
+        }
+        return tmp;
     }
 
     /**
@@ -3135,7 +3270,6 @@ class Node {
             System.out.println(a);
         }
         System.out.println(new Solution().minWindow("ab", "a"));
-        new Solution().generateMatrix(3);
     }
 
 
