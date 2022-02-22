@@ -1654,6 +1654,76 @@ class Node {
     }
 
     /**
+     * 59. 螺旋矩阵 II
+     * @param n n
+     * @return 返回一个n维矩阵，该矩阵元素为1->n的平方
+     */
+    public int[][] generateMatrix(int n) {
+        int[][] res = new int[n][n];
+        // 向右，向下，向左，向上，向右
+        int i = 0, j = 0;
+        int cur = 1;
+        int index = 0;
+        while (true) {
+            res[i][j] = cur++;
+            if (cur == n * n + 1) {
+                break;
+            }
+            if ((index == 1 &&i == n - 1) || (index == 0 && j == n - 1) || (index == 2 && j == 0)) {
+                index = (index + 1) % 4;
+            }
+            if (i - 1 >= 0 && index == 3 && res[i - 1][j] != 0) {
+                index = 0;
+            }
+            if (j + 1 < n && index == 0 && res[i][j + 1] != 0) {
+                index = 1;
+            }
+            if (i + 1 < n && index == 1 && res[i + 1][j] != 0) {
+                index = 2;
+            }
+            if (j - 1 >= 0 && index == 2 && res[i][j - 1] != 0) {
+                index = 3;
+            }
+            if (index == 0) {
+                j++;
+            } else if(index == 1) {
+                i++;
+            } else if (index == 2) {
+                j--;
+            } else {
+                i--;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 59. 螺旋矩阵 II
+     * @param n n
+     * @return 返回一个n维矩阵，该矩阵元素为1->n的平方
+     */
+    public int[][] generateMatrix2(int n) {
+        int maxNum = n * n;
+        int curNum = 1;
+        int[][] matrix = new int[n][n];
+        int row = 0, column = 0;
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}}; // 右下左上
+        int directionIndex = 0;
+        while (curNum <= maxNum) {
+            matrix[row][column] = curNum;
+            curNum++;
+            // nextRow和nextColumn是如果按照之前方向的下一格。通过下一个格是否符合要求来判断是否需要改变方向
+            int nextRow = row + directions[directionIndex][0], nextColumn = column + directions[directionIndex][1];
+            if (nextRow < 0 || nextRow >= n || nextColumn < 0 || nextColumn >= n || matrix[nextRow][nextColumn] != 0) {
+                directionIndex = (directionIndex + 1) % 4; // 顺时针旋转至下一个方向
+            }//这种比我简洁多了
+            row = row + directions[directionIndex][0];
+            column = column + directions[directionIndex][1];
+        }
+        return matrix;
+    }
+
+    /**
      * 69. x 的平方根
      * @param x
      * @return x的平方根下取整
@@ -3065,6 +3135,7 @@ class Node {
             System.out.println(a);
         }
         System.out.println(new Solution().minWindow("ab", "a"));
+        new Solution().generateMatrix(3);
     }
 
 
