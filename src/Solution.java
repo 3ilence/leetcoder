@@ -1934,6 +1934,38 @@ class Node {
     }
 
     /**
+     * 142. 环形链表 II。约瑟夫环问题。
+     * @param head 头指针
+     * @return 链表中环的入口
+     */
+    public ListNode detectCycle(ListNode head) {
+        ListNode fast = head, slow = head;//一次两步和一次一步
+        while (true) {
+            if (fast != null) {
+                fast = fast.next;
+            }
+            if (fast != null) {
+                fast = fast.next;
+            }
+            if (slow != null) {
+                slow = slow.next;
+            }
+            if (fast == null || slow == null) {
+                return null;
+            }
+            if (fast == slow) {
+                break;
+            }
+        }
+        fast = head;
+        while (fast != slow) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
+
+    /**
      * 144. 二叉树的前序遍历
      * @param root 根节点
      * @return 前序遍历序列
