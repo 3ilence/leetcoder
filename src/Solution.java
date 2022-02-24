@@ -423,7 +423,7 @@ public class Solution {
 
 /*剑指offer第二十四题*/
     /*反转链表*/
-    public ListNode reverseList(ListNode head) {
+    public ListNode reverseList2(ListNode head) {
         ListNode cur = head, pre = null;
         while(cur != null) {
             ListNode tmp = cur.next; // 暂存后继节点 cur.next
@@ -569,7 +569,7 @@ public class Solution {
     }
 /*剑指offer第三十二题*/
 //二叉树的层序遍历
-    public int[] levelOrder(TreeNode root) {
+    public int[] levelOrder2(TreeNode root) {
     if(root == null)
         return new int[0];
     Queue<TreeNode> queue = new LinkedList<>();
@@ -589,46 +589,7 @@ public class Solution {
         res[i] = list.get(i);
     return res;
 }
-//public List<List<Integer>> levelOrder(TreeNode root) {
-//    Queue<TreeNode> queue = new LinkedList<>();
-//    List<List<Integer>> res = new LinkedList<>();
-//    if(root != null)
-//        queue.add(root);
-//    while(!queue.isEmpty()) {
-//        List<Integer> tmp = new ArrayList<>();
-//        for(int i = queue.size();i > 0;i--) {
-//            TreeNode node = queue.poll();
-//            tmp.add(node.val);
-//            if(node.left != null)
-//                queue.add(node.left);
-//            if(node.right != null)
-//                queue.add(node.right);
-//        }
-//        res.add(tmp);
-//    }
-//    return res;
-//}
-//    public List<List<Integer>> levelOrder(TreeNode root) {
-//        Queue<TreeNode> queue = new LinkedList<>();
-//        List<List<Integer>> res = new ArrayList<>();
-//        if(root != null)
-//            queue.add(root);
-//        while(!queue.isEmpty()) {
-//            LinkedList<Integer> tmp = new LinkedList<>();
-//            for(int i = queue.size();i > 0;i--) {
-//                TreeNode node  =queue.poll();
-//                if(res.size() % 2 == 0)
-//                    tmp.addLast(node.val);
-//                else tmp.addFirst(node.val);
-//                if(node.left != null)
-//                    queue.add(node.left);
-//                if(node.right != null)
-//                    queue.add(node.right);
-//            }
-//            res.add(tmp);
-//        }
-//        return res;
-//    }
+
 /*剑指offer第三十三题*/
 //    1、递归方法，判断序列是否为二叉搜索树的后序遍历结果
 //    开始我想用copyOfRange方法生成新数组作为参数传递，但是这种做法没有把上下界作为参数来得简单
@@ -1462,30 +1423,33 @@ class Node {
     }
 
     /**
-     * 20.有效的括号，括号匹配
-     * @param s 带判断的括号字符串
-     * @return 有效则返回true
+     * 19. 删除链表的倒数第 N 个结点。要求只用一趟扫描。
+     * @param head 表头
+     * @param n n
+     * @return 返回新链表表头
      */
-    public boolean isValid(String s) {
-        if (s.isEmpty())
-            return true;
-        Stack<Character> stack = new Stack<Character>();
-        for (char c : s.toCharArray()) {
-            if (c == '(')
-                stack.push(')');
-            else if (c == '{')
-                stack.push('}');
-            else if (c == '[')
-                stack.push(']');
-            else if (stack.empty() || c != stack.pop())
-                return false;
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode fast = head, slow = head;
+        int i = 0;
+        for (; fast != null && i < n; i++) {
+            fast = fast.next;
         }
-        if (stack.empty())
-            return true;
-        return false;
+        if (i == n) {//i != n表示链表长度不足n，也就没有所谓的倒数第n个节点
+            if (fast == null) {
+                return head.next;
+            } else {
+                while (fast.next != null) {
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+                slow.next = slow.next.next;
+            }
+        }
+        return head;
     }
+
     /**
-     * 20.有效的括号，这是过了很久自己独立写的
+     * 20.有效的括号
      * @param s 括号字符串
      * @return 是否有效
      */
@@ -1539,8 +1503,36 @@ class Node {
 
         return prehead.next;
     }
-    /*145.二叉树的后序遍历*/
 
+
+    /**
+     * 24. 两两交换链表中的节点
+     * @param head 表头
+     * @return 新表表头
+     */
+    public ListNode swapPairs(ListNode head) {
+        if (head == null) {
+            return head;
+        }
+        ListNode pre = null, tmp, cur = head;
+        if (head.next != null) {
+            head = head.next;
+        }
+        while (cur != null && cur.next != null) {
+            tmp = cur.next.next;
+            if (pre == null) {
+                cur.next.next = cur;
+                cur.next = tmp;
+            } else {
+                pre.next = cur.next;
+                cur.next.next = cur;
+                cur.next = tmp;
+            }
+            pre = cur;
+            cur = tmp;
+        }
+        return head;
+    }
 
     /**
      * 26. 删除有序数组中的重复项。删除重复项同时保持元素相对顺序不变。
@@ -1910,6 +1902,38 @@ class Node {
     }
 
     /**
+     * 102. 二叉树的层序遍历
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        List<TreeNode> list = new ArrayList<>();
+        while (list.isEmpty()) {
+            List<Integer> tmp = new ArrayList<>();
+            List<TreeNode> tmpList = new ArrayList<>();
+            while (list.isEmpty()) {
+                root = list.get(list.size() - 1);
+                list.remove(list.size() - 1);
+                tmp.add(root.val);
+                if (root.left != null) {
+                    tmpList.add(root.left);
+                }
+                if (root.right != null) {
+                    tmpList.add(root.right);
+                }
+
+            }
+            list = tmpList;
+            res.add(tmp);
+        }
+        return res;
+    }
+
+    /**
      * 144. 二叉树的前序遍历
      * @param root 根节点
      * @return 前序遍历序列
@@ -1995,6 +2019,65 @@ class Node {
     }
 
     /**
+     * 160. 相交链表
+     * @param headA headA
+     * @param headB headB
+     * @return 相交节点
+     */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        int la = 0, lb = 0;
+        la = getListLength(headA);
+        lb = getListLength(headB);
+        if (la < lb) {
+            for (int i = 0; i < lb - la; i++) {
+                headB = headB.next;
+            }
+        } else {
+            for (int i = 0; i < la - lb; i++) {
+                headA = headA.next;
+            }
+        }
+        while (headA != null && headA != headB ) {
+            headA = headA.next;
+            headB = headB.next;
+        }
+        return headA == headB ? headA : null;
+
+    }
+
+    /**
+     *求链表长度
+     * @param node 表头
+     * @return 链表长度
+     */
+    public int getListLength(ListNode node) {
+        int l = 0;
+        while (node != null) {
+            node = node.next;
+            l++;
+        }
+        return l;
+    }
+
+    /**
+     *160. 相交链表
+     * @param headA headA
+     * @param headB headB
+     * @return 相交节点
+     */
+    public ListNode getIntersectionNode2(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) {
+            return null;
+        }
+        ListNode A = headA, B = headB;//因为headA和headB后面需要用，所以需要分配临时节点
+        while (A != B) {
+            A = A == null ? headB : A.next;
+            B = B == null ? headA : B.next;
+        }
+        return A;
+    }
+
+    /**
      * 200.岛屿数量
      *
      * @param grid 地形矩阵
@@ -2058,6 +2141,27 @@ class Node {
             }
         }
         return tmp;
+    }
+
+    /**
+     * 206. 反转链表
+     * @param head 表头
+     * @return 反转后的链表表头
+     */
+    public ListNode reverseList(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+        ListNode next = head.next;
+        head.next = null;
+        ListNode tmp;
+        while (next != null) {
+            tmp = next.next;
+            next.next = head;
+            head = next;
+            next = tmp;
+        }
+        return head;
     }
 
     /**
