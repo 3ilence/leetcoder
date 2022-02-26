@@ -1118,7 +1118,7 @@ class Node {
      * @param target 目标和
      * @return
      */
-    public int[] twoSum(int[] nums, int target) {
+    public int[] twoSum2(int[] nums, int target) {
         int res = 0;
         int left = 0, right = nums.length - 1;
         while (left < right) {
@@ -1163,7 +1163,7 @@ class Node {
      * @param s s
      * @return res
      */
-    public static String reverseWords(String s) {
+    public static String reverseWords2(String s) {
         Stack<String> stack = new Stack<>();
         int last = -1;//上一个空格的位置
         int i = 0;
@@ -1197,10 +1197,11 @@ class Node {
      * @return 处理结果字符串
      */
     public String reverseLeftWords(String s, int n) {
-        if (n >= s.length()) {
-            return s;
-        }
-        return s.substring(n,s.length()) + s.substring(0,n);
+        char[] ch = s.toCharArray();
+        reverse(ch, 0, n - 1);
+        reverse(ch, n, ch.length - 1);
+        reverse(ch, 0, ch.length - 1);
+        return new String(ch);
     }
 
     /**
@@ -1420,6 +1421,65 @@ class Node {
             }
         }
         return text1.substring(start, end);
+    }
+
+    /**
+     *1. 两数之和。哈希表。
+     * @param nums 数组
+     * @param target 目标和
+     * @return 和为target的两元素的下标组成的数组
+     */
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i])) {
+                return new int[]{map.get(target - nums[i]), i};
+            }
+            if (!map.containsKey(nums[i])) {
+                map.put(nums[i], i);
+            }
+        }
+        return new int[]{0,0};
+    }
+
+    /**
+     * 15. 三数之和
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(nums);
+
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > 0) {
+                return result;
+            }
+
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            int left = i + 1;
+            int right = nums.length - 1;
+            while (right > left) {
+                int sum = nums[i] + nums[left] + nums[right];
+                if (sum > 0) {
+                    right--;
+                } else if (sum < 0) {
+                    left++;
+                } else {
+                    result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+
+                    while (right > left && nums[right] == nums[right - 1]) right--;
+                    while (right > left && nums[left] == nums[left + 1]) left++;
+
+                    right--;
+                    left++;
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -2051,6 +2111,30 @@ class Node {
     }
 
     /**
+     * 151. 翻转字符串里的单词。正则表达式替换是replaceAll，replace是普通字符序列的替换
+     * @param s s
+     * @return 翻转后的字符串
+     */
+    public String reverseWords(String s) {
+        s.trim();//先去除首尾空格
+        s = s.replaceAll("\\s+", " ");//再将连续的多个空格转换为一个
+        char[] ch = s.toCharArray();
+        reverse(ch, 0, ch.length - 1);
+        for (int i = 0; i < ch.length;) {
+            while ( i < ch.length && ch[i] == ' ') {
+                i++;
+            }
+            int j = i;
+            while (j < ch.length && ch[j] != ' ') {
+                j++;
+            }
+            reverse(ch, i, j - 1);
+            i = j + 1;
+        }
+        return new String(ch).trim();
+    }
+
+    /**
      * 160. 相交链表
      * @param headA headA
      * @param headB headB
@@ -2149,6 +2233,52 @@ class Node {
         if (j + 1 < grid[0].length && grid[i][j + 1] == '1') {
             traverseIsland(grid, i, j + 1, index);
         }
+    }
+
+
+    /**
+     *202. 快乐数。使用哈希表来判断是否有循环
+     * @param n n
+     * @return true or false
+     */
+    public boolean isHappy(int n) {
+        Set<Integer> set = new HashSet<>();
+        while (n != 1) {
+            n = calHappy(n);
+            if (!set.add(n)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     *计算n的各位数的平方和。比如19 = 1*1 + 9*9
+     * @param n n
+     * @return res
+     */
+    public int calHappy(int n) {
+        int sum = 0;
+        while (n > 0) {
+            sum += Math.pow(n % 10, 2);
+            n = n / 10;
+        }
+        return sum;
+    }
+
+    /**
+     * 202. 快乐数。双指针法。快慢双指针终会相遇，如果相遇位置是1，表明符合要求，如果不为1，表明不是。
+     * @param n n
+     * @return true or false
+     */
+    public boolean isHappy2(int n) {
+        int slowRunner = n;
+        int fastRunner = calHappy(n);
+        while (fastRunner != 1 && slowRunner != fastRunner) {
+            slowRunner = calHappy(slowRunner);
+            fastRunner = calHappy(calHappy(fastRunner));
+        }
+        return fastRunner == 1;
     }
 
     /**
@@ -2369,6 +2499,35 @@ class Node {
     }
 
     /**
+     * 242. 有效的字母异位词
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean isAnagram(String s, String t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+        int[] hash = new int[128];
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (hash[s.charAt(i)] == 0 ) {
+                count++;
+            }
+            hash[s.charAt(i)]++;
+        }
+        for (int i = 0; i < t.length(); i++) {
+            if (hash[t.charAt(i)] == 1) {
+                count--;
+            } else if (hash[t.charAt(i)] == 0 ) {
+                return false;
+            }
+            hash[t.charAt(i)]--;
+        }
+        return count == 0;
+    }
+
+    /**
      * 283.移动零。将数组中的0都移动到末尾，并保持其余元素相对位置不变。双指针
      * @param nums nums
      */
@@ -2385,6 +2544,31 @@ class Node {
                 nums[fast] = 0;
             }
         }
+    }
+
+    /**
+     * 349. 两个数组的交集
+     * @param nums1 nums1
+     * @param nums2 nums2
+     * @return 交集
+     */
+    public int[] intersection(int[] nums1, int[] nums2) {
+        Set<Integer> set = new HashSet<>();
+        Set<Integer> res = new HashSet<>();
+        for (int i : nums1) {
+            set.add(i);
+        }
+        for (int i : nums2) {
+            if (set.contains(i)) {
+                res.add(i);
+            }
+        }
+        int[] n = new int[res.size()];
+        int index = 0;
+        for (int a : res) {
+            n[index++] = a;
+        }
+        return n;
     }
 
     /**
@@ -2408,21 +2592,26 @@ class Node {
     }
 
     /**
-     * 反转字符数组arr从start到end位置的字符
-     *
-     * @param arr 字符数组
-     * @param start 起始位置，闭区间
-     * @param end 结束位置，闭区间
+     *383. 赎金信
+     * @param ransomNote
+     * @param magazine
+     * @return
      */
-    public void reverse(char[] arr, int start, int end) {
-        char tmp;
-        while (start < end) {
-            tmp = arr[start];
-            arr[start] = arr[end];
-            arr[end] = tmp;
-            start++;
-            end--;
+    public boolean canConstruct(String ransomNote, String magazine) {
+        if (ransomNote.length() > magazine.length()) {
+            return false;
         }
+        int[] cnt = new int[26];
+        for (char c : magazine.toCharArray()) {
+            cnt[c - 'a']++;
+        }
+        for (char c : ransomNote.toCharArray()) {
+            cnt[c - 'a']--;
+            if(cnt[c - 'a'] < 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -2526,6 +2715,65 @@ class Node {
     }
 
     /**
+     * 454. 四数相加 II
+     * @param nums1 nums1
+     * @param nums2 nums2
+     * @param nums3 nums3
+     * @param nums4 nums4
+     * @return 和等于0的4元组个数
+     */
+    public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int res = 0;
+        for (int a : nums1) {
+            for (int b : nums2) {
+                if (map.containsKey(a + b)) {
+                    map.put(a+b, map.get(a+b) + 1);
+                } else {
+                    map.put(a+b, 1);
+                }
+            }
+        }
+        for (int a : nums3) {
+            for (int b : nums4) {
+                res += map.getOrDefault(-a-b, 0);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 459. 重复的子字符串
+     * @param s
+     * @return
+     */
+    public boolean repeatedSubstringPattern(String s) {
+        if (s.equals("")) return false;
+
+        int len = s.length();
+        // 原串加个空格(哨兵)，使下标从1开始，这样j从0开始，也不用初始化了
+        s = " " + s;
+        char[] chars = s.toCharArray();
+        int[] next = new int[len + 1];
+
+        // 构造 next 数组过程，j从0开始(空格)，i从2开始
+        for (int i = 2, j = 0; i <= len; i++) {
+            // 匹配不成功，j回到前一位置 next 数组所对应的值
+            while (j > 0 && chars[i] != chars[j + 1]) j = next[j];
+            // 匹配成功，j往后移
+            if (chars[i] == chars[j + 1]) j++;
+            // 更新 next 数组的值
+            next[i] = j;
+        }
+
+        // 最后判断是否是重复的子字符串，这里 next[len] 即代表next数组末尾的值
+        if (next[len] > 0 && len % (len - next[len]) == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 494.目标和。很巧妙把问题转换为在数组里取n个数使得和为target'
      *
      * @param nums 源数组
@@ -2615,6 +2863,21 @@ class Node {
             list.add(cur.val);
             cur = cur.right;
         }
+    }
+
+    /**
+     * 541. 反转字符串 II
+     * @param s s
+     * @param k k
+     * @return 反转完成的字符串
+     */
+    public String reverseStr(String s, int k) {
+        int n = s.length();
+        char[] arr = s.toCharArray();
+        for (int i = 0; i < n; i += 2 * k) {
+            reverse(arr, i, Math.min(i + k, n) - 1);
+        }
+        return new String(arr);
     }
 
     /**
@@ -3237,6 +3500,24 @@ class Node {
     }
 
     /**
+     * 反转字符数组arr从start到end位置的字符
+     *
+     * @param arr 字符数组
+     * @param start 起始位置，闭区间
+     * @param end 结束位置，闭区间
+     */
+    public void reverse(char[] arr, int start, int end) {
+        char tmp;
+        while (start < end) {
+            tmp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = tmp;
+            start++;
+            end--;
+        }
+    }
+
+    /**
      * 1283.使结果不超过阈值的最小除数，二分查找
      *
      * @param nums 被除数数组
@@ -3406,6 +3687,8 @@ class Node {
             System.out.println(a);
         }
         System.out.println(new Solution().minWindow("ab", "a"));
+        new Solution().intersection(new int[]{2,3,3,4}, new int[]{1,3});
+        new Solution().reverseWords("  the     sky is    blue");
     }
 
 
