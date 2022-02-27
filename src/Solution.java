@@ -1444,8 +1444,8 @@ class Node {
 
     /**
      * 15. 三数之和
-     * @param nums
-     * @return
+     * @param nums nums
+     * @return 三元组列表
      */
     public List<List<Integer>> threeSum(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
@@ -1480,6 +1480,54 @@ class Node {
             }
         }
         return result;
+    }
+
+    /**
+     * 18. 四数之和
+     * @param nums nums
+     * @param target target
+     * @return 四元组列表
+     */
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        int len = nums.length;
+        if (len < 4) {
+            return res;
+        }
+        Arrays.sort(nums);
+        int i = 0, j, left, right;
+        for (; i < len - 3;i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;//去重
+            }
+            for (j = i + 1; j < len - 2; j++) {
+                left = j + 1;
+                right = len - 1;
+                int tmp = nums[i] + nums[j];
+                if (j-1 > i && j > 1 && nums[j] == nums[j - 1]) {
+                    continue;//去重
+                }
+                while (left < right) {
+                    int sum = nums[left] + nums[right];
+                    if (sum + tmp < target) {
+                        left++;
+                    } else if (sum + tmp > target) {
+                        right--;
+                    } else {
+                        res.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));
+                        while (left < right && nums[left] == nums[left+1] ) {
+                            left++;
+                        }
+                        while (left < right && nums[right] == nums[right - 1]) {
+                            right--;
+                        }
+                        left++;
+                        right--;
+                    }
+                }
+            }
+        }
+        return res;
     }
 
     /**
@@ -3689,6 +3737,7 @@ class Node {
         System.out.println(new Solution().minWindow("ab", "a"));
         new Solution().intersection(new int[]{2,3,3,4}, new int[]{1,3});
         new Solution().reverseWords("  the     sky is    blue");
+        new Solution().fourSum(new int[]{-3,-2,-1,0,0,1,2,3},0 );
     }
 
 
