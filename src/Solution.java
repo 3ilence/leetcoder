@@ -1210,7 +1210,7 @@ class Node {
      * @param k 窗口大小
      * @return 移动过程中的最大值构成的数组
      */
-    public int[] maxSlidingWindow(int[] nums, int k) {
+    public int[] maxSlidingWindow3(int[] nums, int k) {
         if(nums.length == 0 || k == 0) return new int[0];
         int[] res = new int[nums.length + 1 - k];
         Deque<Integer> deque = new LinkedList<>();
@@ -1561,28 +1561,21 @@ class Node {
      * @param s 括号字符串
      * @return 是否有效
      */
-    public boolean isValid2(String s) {
-        if (s.length() == 0)
+    public boolean isValid(String s) {
+        if(s.isEmpty())
             return true;
-        Stack<Character> stack = new Stack<>();
-        int start = 0;
-        while (start < s.length() ) {
-            if (s.charAt(start) == '(') {
+        Deque<Character> stack = new ArrayDeque<>();
+        for(char c:s.toCharArray()){
+            if(c=='(')
                 stack.push(')');
-            } else if (s.charAt(start) == '[') {
-                stack.push(']');
-            } else if (s.charAt(start) == '{') {
+            else if(c=='{')
                 stack.push('}');
-            } else {
-                if (!stack.isEmpty() && stack.peek() == s.charAt(start)) {
-                    stack.pop();
-                } else {
-                    return false;
-                }
-            }
-            start++;
+            else if(c=='[')
+                stack.push(']');
+            else if(stack.isEmpty()||c!=stack.pop())
+                return false;
         }
-        return stack.empty();
+        return stack.isEmpty();
     }
 
     /**
@@ -2159,6 +2152,42 @@ class Node {
     }
 
     /**
+     *150. 逆波兰表达式求值
+     * @param tokens 表达式
+     * @return 表达式的值
+     */
+    public int evalRPN(String[] tokens) {
+        Deque<Integer> stack = new ArrayDeque<>();
+        Set<String> set = new HashSet<>();
+        set.add("+");set.add("-");set.add("*");set.add("/");
+        int res;
+        for (String s : tokens) {
+            if (set.contains(s)) {
+                switch(s) {
+                    case "+" :
+                        stack.push(stack.poll() + stack.poll());
+                        break;
+                    case "-":
+                        int sub = stack.poll();
+                        int subed = stack.poll();
+                        stack.push(subed - sub);
+                        break;
+                    case "*":
+                        stack.push(stack.poll() * stack.poll());
+                        break;
+                    case "/":
+                        int divide = stack.poll();
+                        int divided = stack.poll();
+                        stack.push(divided / divide);
+                }
+            } else {
+                stack.push(Integer.parseInt(s));
+            }
+        }
+        return stack.poll();
+    }
+
+    /**
      * 151. 翻转字符串里的单词。正则表达式替换是replaceAll，replace是普通字符序列的替换
      * @param s s
      * @return 翻转后的字符串
@@ -2445,6 +2474,14 @@ class Node {
     }
 
     /**
+     *225. 用队列实现栈
+     */
+
+    /**
+     *232.用栈实现队列
+     */
+
+    /**
      * 234.回文链表。要求时间O(n)，空间O(1)
      *
      * @param head 表头，此表头为val不为空的表头
@@ -2544,6 +2581,49 @@ class Node {
             }
         }
         return res;
+    }
+
+    /**
+     * 239.滑动窗口最大值。注意代码复用。
+     *
+     * @param nums 数组
+     * @param k 窗口大小
+     * @return 数组，res[i]表示第i个窗口内的最大值
+     */
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        Deque<Integer> stack = new ArrayDeque<>();//单调递减栈，存下标
+        int len = nums.length;
+        int[] res = new int[len - k + 1];
+        int left = 0, right = k - 1;
+        for (int i = left; i < right; i++) {
+            if (stack.isEmpty() || nums[stack.peekLast()] >= nums[i]) {
+                stack.offer(i);
+            } else {
+                while (!stack.isEmpty() && nums[stack.peekLast()] < nums[i]) {
+                    stack.pollLast();
+                }
+                stack.offer(i);
+            }
+        }
+        int index = 0;
+        while (right < len) {
+            if (stack.isEmpty() || nums[stack.peekLast()] >= nums[right]) {
+                stack.offer(right);
+            } else {
+                while (!stack.isEmpty() && nums[stack.peekLast()] >= nums[right]) {
+                    stack.pollLast();
+                }
+                stack.offer(right);
+            }
+            while (stack.peek() < left || stack.peek() > right) {
+                stack.pollFirst();
+            }
+            res[index++] = nums[stack.peekFirst()];
+            right++;
+            left++;
+        }
+        return res;
+
     }
 
     /**
@@ -3518,6 +3598,23 @@ class Node {
     }
 
     /**
+     * 1047. 删除字符串中的所有相邻重复项
+     * @param s s
+     * @return 处理后的字符串
+     */
+    public String removeDuplicates(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (char a : s.toCharArray()) {
+            if (sb.length() > 0 && sb.charAt(sb.length() - 1) == a) {
+                sb.deleteCharAt(sb.length() - 1);
+            } else {
+                sb.append(a);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * 1190.反转每对括号间的子串
      *
      * @param s 初始字符串
@@ -3738,6 +3835,8 @@ class Node {
         new Solution().intersection(new int[]{2,3,3,4}, new int[]{1,3});
         new Solution().reverseWords("  the     sky is    blue");
         new Solution().fourSum(new int[]{-3,-2,-1,0,0,1,2,3},0 );
+        new Solution().evalRPN(new String[] {"4","13","5","/","+"});
+        new Solution().maxSlidingWindow(new int[]{1,3,-1,-3,5,3,6,7}, 3);
     }
 
 
