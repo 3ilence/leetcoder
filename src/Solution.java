@@ -2675,6 +2675,43 @@ class Node {
     }
 
     /**
+     * 347. 前 K 个高频元素。堆or优先队列
+     * @param nums nums
+     * @param k k
+     * @return 返回出现频率top k的元素组成的数组
+     */
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> occurrences = new HashMap<Integer, Integer>();
+        for (int num : nums) {
+            occurrences.put(num, occurrences.getOrDefault(num, 0) + 1);
+        }
+
+        // int[] 的第一个元素代表数组的值，第二个元素代表了该值出现的次数
+        PriorityQueue<int[]> queue = new PriorityQueue<int[]>(new Comparator<int[]>() {
+            public int compare(int[] m, int[] n) {
+                return m[1] - n[1];//小根堆，队首永远是最小值
+            }
+        });
+        for (Map.Entry<Integer, Integer> entry : occurrences.entrySet()) {
+            int num = entry.getKey(), count = entry.getValue();
+            if (queue.size() == k) {
+                // 保持队列容量不大于k，这样堆的平衡操作花费更小，算法更快
+                if (queue.peek()[1] < count) {
+                    queue.poll();
+                    queue.offer(new int[]{num, count});
+                }
+            } else {
+                queue.offer(new int[]{num, count});
+            }
+        }
+        int[] ret = new int[k];
+        for (int i = 0; i < k; ++i) {
+            ret[i] = queue.poll()[0];
+        }
+        return ret;
+    }
+
+    /**
      * 349. 两个数组的交集
      * @param nums1 nums1
      * @param nums2 nums2
@@ -3837,6 +3874,7 @@ class Node {
         new Solution().fourSum(new int[]{-3,-2,-1,0,0,1,2,3},0 );
         new Solution().evalRPN(new String[] {"4","13","5","/","+"});
         new Solution().maxSlidingWindow(new int[]{1,3,-1,-3,5,3,6,7}, 3);
+        new Solution().topKFrequent(new int[] {4,1,-1,2,-1,2,3}, 2);
     }
 
 
