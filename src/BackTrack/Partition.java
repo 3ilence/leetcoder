@@ -42,7 +42,7 @@ public class Partition {
     }
 
     /**
-     * 判断是否是回文串
+     * 判断是否是回文串。用动态规划判断回文串会更快，因为对重复的字符串多次调用了该方法
      * @param s 字符串
      * @return true or false
      */
