@@ -1815,6 +1815,62 @@ class Node {
     }
 
     /**
+     * 62. 不同路径。动规。
+     * @param m 行数
+     * @param n 列数
+     * @return 到达终点的路径个数
+     */
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[n][m];//到达该点的路径个数
+        dp[0][0] = 1;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (i == 0 && j == 0) {
+                    continue;
+                }
+                if (i > 0 && j > 0) {
+                    dp[i][j] = dp[i-1][j] + dp[i][j-1];
+                } else if (i > 0) {
+                    dp[i][j] = dp[i-1][j];
+                } else if (j > 0) {
+                    dp[i][j] = dp[i][j - 1];
+                }
+            }
+        }
+        return dp[n-1][m-1];
+    }
+
+    /**
+     * 63. 不同路径 II
+     * @param obstacleGrid 地形矩阵
+     * @return 到达终点的路线数
+     */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int n = obstacleGrid.length;
+        int m = obstacleGrid[0].length;
+        int[][] dp = new int[n][m];//到达该点的路径个数
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (obstacleGrid[i][j] == 1) {
+                    continue;
+                }
+                if (i == 0 && j == 0) {
+                    dp[0][0] = 1;
+                    continue;
+                }
+                if (i > 0 && j > 0) {
+                    dp[i][j] = dp[i-1][j] + dp[i][j-1];
+                } else if (i > 0) {
+                    dp[i][j] = dp[i-1][j];
+                } else if (j > 0) {
+                    dp[i][j] = dp[i][j - 1];
+                }
+            }
+        }
+        return dp[n-1][m-1];
+    }
+
+    /**
      * 69. x 的平方根
      * @param x
      * @return x的平方根下取整
@@ -1833,6 +1889,24 @@ class Node {
             }
         }
         return ans;
+    }
+
+    /**
+     * 70. 爬楼梯
+     * @param n n阶的楼梯
+     * @return 爬上顶可能的路线个数
+     */
+    public int climbStairs(int n) {
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        for (int i = 1; i <= n; i++) {
+            if (i >= 2) {
+                dp[i] = dp[i - 1] + dp[i - 2];
+            } else {
+                dp[i] = dp[i - 1];
+            }
+        }
+        return dp[n];
     }
 
     /**
@@ -3000,6 +3074,26 @@ class Node {
     }
 
     /**
+     * 509. 斐波那契数
+     * @param n n
+     * @return f(n)
+     */
+    public int fib2(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        int pre = 0, cur = 1;
+        int tmp;
+        for (int i = 2; i<= n; i++) {
+            pre = pre + cur;
+            tmp = pre;
+            pre = cur;
+            cur = tmp;
+        }
+        return cur;
+    }
+
+    /**
      * 538.把二叉搜索树转换为累加树。方法一是反中序遍历，即右中左，用递归实现，很好实现。第二种就是这种笨方法。
      *
      * @param root 根节点
@@ -3282,6 +3376,21 @@ class Node {
             }
         }
         return res;
+    }
+
+    /**
+     * 746. 使用最小花费爬楼梯
+     * @param cost cost[]
+     * @return 登上楼梯顶的最小花费
+     */
+    public int minCostClimbingStairs(int[] cost) {
+        int[] dp = new int[cost.length + 1];//dp[i]到达第i阶的最小花费
+        dp[0] = 0;
+        dp[1] = 0;
+        for (int i = 2; i <= cost.length; i++) {
+            dp[i] = Math.min(dp[i-1] + cost[i-1], dp[i-2] + cost[i-2]);
+        }
+        return dp[cost.length];
     }
 
     /**
