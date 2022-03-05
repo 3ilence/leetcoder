@@ -1836,6 +1836,36 @@ class Node {
     }
 
     /**
+     * 71. 简化路径
+     * @param path path
+     * @return 化简后路径
+     */
+    public String simplifyPath(String path) {
+        String[] input = path.split("/");
+        StringBuilder sb = new StringBuilder();
+        Deque<String> stack = new ArrayDeque<>();
+        for (String s : input) {
+            if (s.equals(".") || s.length() == 0) {
+                continue;
+            } else if (s.equals("..")) {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+            } else {
+                stack.push(s);
+            }
+        }
+        while (!stack.isEmpty()) {
+            sb.append("/").append(stack.pollLast());
+        }
+        if (sb.length() == 0) {
+            return "/";
+        } else {
+            return sb.toString();
+        }
+    }
+
+    /**
      * 76. 最小覆盖子串。滑动窗口+哈希表
      * @param s s
      * @param t t
