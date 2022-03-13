@@ -11,7 +11,7 @@ public class LastStoneWeightII {
     /**
      * 动规。选取任意i个石头，使重量和尽量接近总重量一半
      * @param stones stones
-     * @return
+     * @return res
      */
     public int lastStoneWeightII(int[] stones) {
         int n = stones.length;
@@ -37,7 +37,7 @@ public class LastStoneWeightII {
     /**
      * 01背包空间优化
      * @param stones stones
-     * @return
+     * @return res
      */
     public int lastStoneWeightII2(int[] stones) {
         int n = stones.length;
@@ -53,24 +53,6 @@ public class LastStoneWeightII {
             }
         }
         return Math.abs(sum - f[t] - f[t]);
-    }
-
-    public int lastStoneWeightII3(int[] stones) {
-        int len = stones.length;
-        int sum = 0;
-        for (int i : stones) {
-            sum += i;
-        }
-        int res = 0;
-        sum /= 2;//目标和，整数除法最终截断，不过无影响
-        // 转换为01背包问题就是从一批货物中选取任意个，放入背包，使得它们的价值尽可能地接近sum
-        int[][] dp = new int[len][len + 1];//dp[i]表示使用容量为len的背包从前i个货物中进行选择，得到的最接近sum的价值
-        for (int i = 0; i < len; i++) {
-            for (int j = 1; j <= len; j++) {
-                dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-stones[i]] + stones[i]);
-            }
-        }
-        return 0;
     }
 
     public static void main(String[] args) {
