@@ -75,15 +75,44 @@ public class FindMaxForm {
         }
         int[][] dp = new int[m + 1][n + 1];//dp[j][k]表示前i个元素的集合的子集最大长度
         for (int i = 0; i < len; i++) {
-            for (int j = m; j >= 0; j--) {
-                for (int k = n; k >= 0; k--) {
-                    if (k >= one[i] && j >= zero[i]) {
+            for (int j = m; j >= zero[i]; j--) {
+                for (int k = n; k >= one[i]; k--) {
                         dp[j][k] = Math.max(Math.max(dp[j][k], dp[j][k]), dp[j-zero[i]][k - one[i]] + 1);
-                    }
-                    res = Math.max(res, dp[j][k]);
                 }
             }
         }
-        return res;
+        return dp[m][n];
+    }
+
+    /**
+     * 进一步优化时间复杂度
+     * @param strs strs
+     * @param m m
+     * @param n n
+     * @return 最大满足要求子集长度
+     */
+    public int findMaxForm3(String[] strs, int m, int n) {
+        int res = 0;
+        int len = strs.length;
+        int[][] dp = new int[m + 1][n + 1];//dp[j][k]表示前i个元素的集合的子集最大长度
+        for (int i = 0; i < len; i++) {
+            int[] zerosOnes = getZerosOnes(strs[i]);
+            int zeros = zerosOnes[0], ones = zerosOnes[1];
+            for (int j = m; j >= zeros; j--) {
+                for (int k = n; k >= ones; k--) {
+                    dp[j][k] = Math.max(Math.max(dp[j][k], dp[j][k]), dp[j-zeros][k - ones] + 1);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    public int[] getZerosOnes(String str) {
+        int[] zerosOnes = new int[2];
+        int length = str.length();
+        for (int i = 0; i < length; i++) {
+            zerosOnes[str.charAt(i) - '0']++;
+        }
+        return zerosOnes;
     }
 }
