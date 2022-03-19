@@ -1,8 +1,6 @@
 
-import com.sun.source.tree.Tree;
-import org.w3c.dom.css.Counter;
-
 import java.util.*;
+import Tree.TreeNode;
 
 public class Solution {
     /* Leetcode剑指offer第三题*/
@@ -79,15 +77,9 @@ public class Solution {
     }
 /*LeetCode剑指Offer第七题*/
     /*根据前序遍历和中序遍历结果构造二叉树*/
-    public class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-        TreeNode(int x) { val = x; }
-    }
     private Map<Integer,Integer> indexMap;
     //递归构建二叉树函数
-    public TreeNode myBuildTree(int[] preorder,int[] inorder,int preorder_left,int preorder_right,int inorder_left,int inorder_right) {
+    public TreeNode myBuildTree(int[] preorder, int[] inorder, int preorder_left, int preorder_right, int inorder_left, int inorder_right) {
         if (preorder_left > preorder_right) {
             return null;
         }
@@ -109,7 +101,7 @@ public class Solution {
         root.right = myBuildTree(preorder,inorder,preorder_left + size_left_subtree+1,preorder_right,inorder_root + 1,inorder_right);
         return root;
     }
-    public TreeNode buildTree(int[] preorder,int[] inorder) {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
         int n = preorder.length;//
         indexMap = new HashMap<>();
         for(int i = 0; i < n; i++) {
