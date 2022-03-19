@@ -1,5 +1,7 @@
 package DynamicProgramming;
 
+import java.util.Arrays;
+
 /**
  * @ClassName : CoinChange
  * @Author : Silence
@@ -37,6 +39,27 @@ public class CoinChange {
             }
         }
         return dp[amount] == 0 ? -1 : dp[amount];
+    }
+
+    /**
+     * 题解通过把状态数组都赋为最大值，这样就不用分类讨论了
+     * @param coins coins
+     * @param amount amount
+     * @return 最少的零钱
+     */
+    public int coinChange2(int[] coins, int amount) {
+        int max = amount + 1;
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, max);//很关键
+        dp[0] = 0;
+        for (int i = 1; i <= amount; i++) {
+            for (int j = 0; j < coins.length; j++) {
+                if (coins[j] <= i) {
+                    dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+                }
+            }
+        }
+        return dp[amount] > amount ? -1 : dp[amount];
     }
 
     public static void main(String[] args) {
