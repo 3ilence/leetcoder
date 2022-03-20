@@ -34,4 +34,20 @@ public class MaxProfit {
         }
         return res;
     }
+
+    /**
+     * 就是从数组中找到两个数，使得右边数减去左边数得到的值最大，做法是保存遍历过的最小数，并且每次遍历就记录res
+     * @param prices prices
+     * @return 最大利润
+     */
+    public int maxProfit2(int[] prices) {
+        int res = 0, cur = -prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            res = Math.max(cur + prices[i], res);
+            if (-cur > prices[i]) {
+                cur = -prices[i];
+            }
+        }
+        return res;
+    }
 }
