@@ -22,9 +22,7 @@ public class LengthOfLIS {
         int res = 1;
         for (int i = 1; i < len; i++) {
             for (int j = 0; j < i; j++ ) {
-                if (dp[i] >= dp[j] + 1) {
-                    continue;
-                } else if (nums[i] > nums[j]) {
+                if (dp[i] < dp[j] + 1 && nums[i] > nums[j]) {
                     dp[i] = dp[j] + 1;
                 }
             }
