@@ -4,7 +4,7 @@ package DynamicProgramming;
  * @ClassName : MaxProfit
  * @Author : Silence
  * @Date: 2022/3/5 9:00
- * @Description : 122&123&188&309. 买卖股票的最佳时机
+ * @Description : 122&123&188&309&714. 买卖股票的最佳时机
  */
 public class MaxProfit {
 
@@ -149,6 +149,26 @@ public class MaxProfit {
             a = Math.max(a, tmp - prices[i]);
         }
         return Math.max(b, c);
+    }
+
+    /**
+     * 714. 买卖股票的最佳时机含手续费。空间优化后。
+     * @param prices 价格
+     * @param fee 交易费用
+     * @return 最大利润
+     */
+    public int maxProfit(int[] prices, int fee) {
+        if (prices == null || prices.length < 2) {
+            return 0;
+        }
+        int len = prices.length;
+        int a = 0, b = -prices[0];//a代表不持有股票，b代表持有股票
+        for (int i = 1; i < len; i++) {
+            int tmp = a;
+            a = Math.max(a, b + prices[i] - fee);
+            b = Math.max(b, tmp - prices[i]);
+        }
+        return a;
     }
 
     public static void main(String[] args) {
