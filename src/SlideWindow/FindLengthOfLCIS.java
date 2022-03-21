@@ -9,7 +9,7 @@ package SlideWindow;
 public class FindLengthOfLCIS {
 
     /**
-     * 典型滑动窗口问题，处理边界的时候有点思考量
+     * 典型滑动窗口问题，处理边界的时候有点思考量。我看官方题解说是贪心，感觉有点绕。
      * @param nums nums
      * @return 最长连续递增序列长度
      */
