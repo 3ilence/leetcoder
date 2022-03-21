@@ -55,13 +55,12 @@ public class MaxProfit {
                     dp[i][1][1] = Math.max(dp[i-1][0][1] - prices[i], dp[i-1][1][1]);
                 }
             }
-            if (i >= 1) {
-                if (i == 1) {
-                    dp[i][0][1] = dp[i-1][1][2] + prices[i];
-                } else {
-                    dp[i][0][1] = Math.max(dp[i-1][1][2] + prices[i], dp[i-1][0][1]);
-                }
+            if (i == 1) {
+                dp[i][0][1] = dp[i-1][1][2] + prices[i];
+            } else {
+                dp[i][0][1] = Math.max(dp[i-1][1][2] + prices[i], dp[i-1][0][1]);
             }
+
             dp[i][0][2] = dp[i-1][0][2];
             dp[i][1][2] = Math.max(dp[i-1][0][2] - prices[i], dp[i-1][1][2]);
         }
@@ -74,7 +73,6 @@ public class MaxProfit {
      * @return 最大利润
      */
     public int maxProfit4(int[] prices) {
-        int len = prices.length;
         int buy1 = -prices[0], buy2 = -prices[0];
         int sell1 = 0, sell2 = 0;
         for (int i = 1; i < prices.length; i++) {
