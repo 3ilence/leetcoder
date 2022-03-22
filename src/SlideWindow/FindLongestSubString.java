@@ -1,4 +1,4 @@
-package DoublePointer.SlideWindow;
+package SlideWindow;
 
 import java.util.HashMap;
 import java.util.Map;
