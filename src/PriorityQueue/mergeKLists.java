@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
  * @ClassName : mergeKLists
  * @Author : Silence
  * @Date: 2022/11/22 14:41
- * @Description : 21.合并K个升序链表
+ * @Description : 23.合并K个升序链表
  */
 public class mergeKLists {
     public ListNode mergeKLists(ListNode[] lists) {
