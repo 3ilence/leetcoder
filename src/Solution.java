@@ -1,6 +1,7 @@
 
 import java.util.*;
 import Tree.TreeNode;
+import datastructure.List.ListNode;
 
 public class Solution {
     /* Leetcode剑指offer第三题*/
@@ -49,16 +50,7 @@ public class Solution {
         }
         return res.toString();
     }
-/*LeetCode剑指Offer第六题*/
-    /*输入一个链表的头节点，从尾到头反过来返回每个节点的值（用数组返回）*/
-    static class ListNode {
-        int val;
-        ListNode next;
-        ListNode(int x) { val = x; }
-        ListNode() {
-            super();
-        }
-    }
+
     public int[] reversePrint(ListNode head) {
         Stack<ListNode> s = new Stack<>();
         ListNode temp = head;
