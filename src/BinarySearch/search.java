@@ -7,6 +7,12 @@ package BinarySearch;
  * @Description : 33. 搜索旋转排序数组
  */
 public class search {
+    /**
+     * 三个关键判断条件：nums[mid] ? nums[0], nums[mid] ? target, nums[0] ? target.这三个条件决定了要如何移动左右指针才能接近target
+     * @param nums
+     * @param target
+     * @return
+     */
     public int search(int[] nums, int target) {
         int left = 0, right = nums.length - 1, mid;
         //简而言之，nums[mid]需要接近target
