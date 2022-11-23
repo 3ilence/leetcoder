@@ -1,6 +1,6 @@
 package DynamicProgramming;
 
-import Tree.TreeNode;
+import datastructure.Tree.TreeNode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;

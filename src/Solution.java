@@ -1,6 +1,8 @@
 
 import java.util.*;
-import Tree.TreeNode;
+
+import UnionFind.UnionFind;
+import datastructure.Tree.TreeNode;
 import datastructure.List.ListNode;
 
 public class Solution {

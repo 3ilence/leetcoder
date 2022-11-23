@@ -1,7 +1,9 @@
+package ApplicationProblem;
+
 import java.util.Arrays;
 
 /**
- * @ClassName : nextPermutation
+ * @ClassName : ApplicationProblem.nextPermutation
  * @Author : Silence
  * @Date: 2022/11/22 13:43
  * @Description : 31.下一个排列

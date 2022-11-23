@@ -1,7 +1,9 @@
+package Partition;
+
 import java.util.Random;
 
 /**
- * @ClassName : QuickSelect
+ * @ClassName : Partition.QuickSelect
  * @Author : Silence
  * @Date: 2021/11/20 9:53
  * @Description : 查找数组中的第k大元素

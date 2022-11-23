@@ -1,5 +1,7 @@
+package UnionFind;
+
 /**
- * @ClassName : UnionFind
+ * @ClassName : UnionFind.UnionFind
  * @Author : Silence
  * @Date: 2021/10/31 19:16
  * @Description : 并查集
