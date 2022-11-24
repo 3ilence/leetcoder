@@ -47,6 +47,34 @@ public class Merge {
         return res;
     }
 
+    /**
+     * 我看了这个解才知道List<int[]>是存在的，甚至还能直接转成int[][]
+     * 这种做法一次性可以合并多个区间，不像上面做法每次固定合并两个区间，所以要快一点
+     * @param intervals
+     * @return
+     */
+    public int[][] merge3(int[][] intervals) {
+        List<int[]> res = new ArrayList<>();
+        if (intervals.length == 0 || intervals == null) return res.toArray(new int[0][]);
+        // 对起点终点进行排序
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        int i = 0;
+        while (i < intervals.length) {
+            int left = intervals[i][0];
+            int right = intervals[i][1];
+            // 如果有重叠，循环判断哪个起点满足条件
+            while (i < intervals.length - 1 && intervals[i + 1][0] <= right) {
+                i++;
+                right = Math.max(right, intervals[i][1]);
+            }
+            // 将现在的区间放进res里面
+            res.add(new int[]{left, right});
+            // 接着判断下一个区间
+            i++;
+        }
+        return res.toArray(new int[0][]);
+    }
+
     public static void main(String[] args) {
         new Merge().merge(new int[][] {{1,2}, {2,6}, {8, 10}});
     }
