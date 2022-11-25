@@ -26,4 +26,22 @@ public class ClimbStairs {
         }
         return dp[n];
     }
+
+    /**
+     * 空间优化，因为每个状态都只依赖于前两个状态，因此也就只需要两个数的空间存储状态
+     * @param n
+     * @return
+     */
+    public int climbStairs2(int n) {
+        if (n <= 2) {
+            return n;
+        }
+        int first = 1, second = 2;
+        for (int i = 3; i <= n; i++) {
+            int tmp = second;
+            second = second + first;
+            first = tmp;
+        }
+        return second;
+    }
 }
