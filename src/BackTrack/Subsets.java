@@ -31,11 +31,11 @@ public class Subsets {
         if (tmp.size() == length) {
             res.add(new ArrayList<>(tmp));
         }
-        if (length - tmp.size() > nums.length - start) {
-            return;
-        }
 
         for (int i = start; i < nums.length; i++ ) {
+            if (tmp.size() + nums.length - i < length) {
+                return;
+            }
             tmp.add(nums[i]);
             backTrack(nums, i + 1, length);
             tmp.remove(tmp.size() - 1);
