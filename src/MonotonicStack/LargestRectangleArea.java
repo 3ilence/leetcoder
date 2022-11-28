@@ -12,7 +12,12 @@ import java.util.Deque;
  */
 public class LargestRectangleArea {
 
-
+    /**
+     * 刚刚知道了我看这段代码费劲的原因，在Deque中，pop是移除队首也就是栈底的元素，peek是获取队首也就是栈底的元素，pop = removeFirst, peek = peekFirst, push = addFirst
+     * 其实找第一个小于height[i]的下标还是简单，就是单增栈，以向右遍历举例，不满足单调的时候就将栈顶出栈，r[stack.pollLast()] = i.
+     * @param heights
+     * @return
+     */
     public int largestRectangleArea(int[] heights) {
         int res = 0;
         int len = heights.length;
