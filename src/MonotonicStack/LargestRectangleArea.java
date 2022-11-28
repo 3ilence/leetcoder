@@ -13,6 +13,36 @@ import java.util.Deque;
 public class LargestRectangleArea {
 
     /**
+     * 单调栈优化，一次扫描。做法是非严格单增栈，非严格意思是相等也看做单增
+     * 当h[stack.peekLast()] > h[i]时，将栈顶出栈，记为tmp，那么i是tmp右边第一个小于i的高度的下标，又因为栈内高度单增，所以h[stack.peekLast()] <= h[tmp]
+     * 可以得到面积等于 area = h[tmp] * (i - stack.peekLast() - 1)
+     * 唯一的问题在于有可能h[stack.peekLast()] == h[tmp]，那么stack.peekLast()也就不是准确的左边界，实际左边界还要往左移动，也就是说有可能实际面积要大于area
+     * 但是这个问题并非问题，假设stack.peekLast是连续重复元素的第一个，那么当它出栈的时候左边界便不会错，并且它的面积也是最大的
+     * 也就是说如果存在连续的相同高度的元素，并不会影响最终答案
+     * 如果用严格单增栈的话代码还是一样，但是理解起来稍有区别
+     * @param heights
+     * @return
+     */
+    public int largestRectangleArea6(int[] heights) {
+        int res = 0;
+        Deque<Integer> stack = new ArrayDeque<>();
+        for (int i = 0; i < heights.length; i++) {
+            while (!stack.isEmpty() && heights[stack.peekLast()] > heights[i]) {//可以严格单增也可以不，两种都是正确答案，且代码除了这里都一样
+                int tmp = stack.pollLast();
+                int left = stack.isEmpty() ? -1 : stack.peekLast();
+                res = Math.max(res, heights[tmp] * (i - left - 1));
+            }
+            stack.addLast(i);
+        }
+        while (!stack.isEmpty()) {
+            int tmp = stack.pollLast();
+            int left = stack.isEmpty() ? -1 : stack.peekLast();
+            res = Math.max(res, heights[tmp] * (heights.length - left - 1));
+        }
+        return res;
+    }
+
+    /**
      * 刚刚知道了我看这段代码费劲的原因，在Deque中，pop是移除队首也就是栈底的元素，peek是获取队首也就是栈底的元素，pop = removeFirst, peek = peekFirst, push = addFirst
      * 其实找第一个小于height[i]的下标还是简单，就是单增栈，以向右遍历举例，不满足单调的时候就将栈顶出栈，r[stack.pollLast()] = i.
      * @param heights
