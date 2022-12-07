@@ -13,9 +13,8 @@ import java.util.Map;
  */
 public class Rob {
 
-    // <https://leetcode-cn.com/problems/house-robber/>
     /**
-     * 动态规划
+     * 动态规划，可以进行状态压缩
      * @param nums nums
      * @return 能偷窃的最大金钱
      */
