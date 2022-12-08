@@ -9,6 +9,41 @@ package DynamicProgramming;
 public class CanPartition {
 
     /**
+     * 背包问题一般都是倒序进行状态转移可以完成状态压缩
+     * @param nums
+     * @return
+     */
+    public boolean canPartition3(int[] nums) {
+        int len = nums.length;
+        int sum = 0;
+        for (int i : nums) {
+            sum += i;
+        }
+        if (sum % 2 != 0) {
+            return false;
+        }
+        boolean[][] dp = new boolean[len + 1][sum / 2 + 1];//dp[i][j]表示前i个元素能否拼出j
+        for (int i = 0; i <= len; i++) {
+            dp[i][0] = true;
+        }
+        for (int i = 1; i <= len; i++) {
+            for (int j = 1; j <= sum / 2; j++) {
+                if (j >= nums[i - 1]) {
+                    if (dp[i-1][j - nums[i - 1]] || dp[i-1][j]) {
+                        dp[i][j] = true;
+                    }
+                } else {
+                    dp[i][j] = dp[i-1][j];
+                }
+                if (j == sum / 2 && dp[i][j]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * 01背包问题，动规解法，二维状态数组
      * @param nums nums
      * @return 能否分割
