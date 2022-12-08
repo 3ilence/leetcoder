@@ -1,5 +1,8 @@
 package DynamicProgramming;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @ClassName : FindMaxForm
  * @Author : Silence
@@ -8,7 +11,73 @@ package DynamicProgramming;
  */
 public class FindMaxForm {
 
-    /*<https://leetcode-cn.com/problems/ones-and-zeroes/>*/
+
+    /**
+     * 状态压缩
+     * @param strs
+     * @param m
+     * @param n
+     * @return
+     */
+    public int findMaxForm5(String[] strs, int m, int n) {
+        int len = strs.length;
+        int[] map = new int[len];
+        for (int j = 0; j < len; j++) {
+            for (int i = 0; i < strs[j].length(); i++) {
+                if (strs[j].charAt(i) == '0') {
+                    map[j]++;
+                }
+            }
+        }
+
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i <= len; i++) {
+            int zero = map[i - 1];
+            // 有一点就是当反向进行状态转移的时候，j >= zero, k >= one就变成了循环终止条件
+            for (int j = m; j >= zero; j--) {
+                for (int k = n; k >= strs[i-1].length() - zero; k--) {
+                    dp[j][k] = Math.max(dp[j][k], dp[j - zero][k - strs[i - 1].length() + zero] + 1);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    /**
+     * 未进行空间压缩
+     * @param strs
+     * @param m
+     * @param n
+     * @return
+     */
+    public int findMaxForm4(String[] strs, int m, int n) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int len = strs.length;
+        for (int j = 0; j < len; j++) {
+            int tmp = 0;
+            for (int i = 0; i < strs[j].length(); i++) {
+                if (strs[j].charAt(i) == '0') {
+                    tmp++;
+                }
+            }
+            map.put(j, tmp);
+        }
+
+        int[][][] dp = new int[len + 1][m + 1][n + 1];
+        for (int i = 1; i <= len; i++) {
+            for (int j = 0; j <= m; j++) {
+                for (int k = 0; k <= n; k++) {
+                    int zero = map.get(i - 1);
+                    if (j >= zero && k >= (strs[i - 1].length() - zero)) {
+                        dp[i][j][k] = Math.max(dp[i - 1][j][k], dp[i - 1][j - zero][k - strs[i - 1].length() + zero] + 1);
+                    } else {
+                        dp[i][j][k] = dp[i - 1][j][k];
+                    }
+                }
+            }
+        }
+        return dp[len][m][n];
+    }
 
     /**
      * 01背包问题。空间未优化
