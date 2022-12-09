@@ -10,6 +10,28 @@ import java.util.Arrays;
  */
 public class CoinChange {
 
+    public int coinChange3(int[] coins, int amount) {
+        if (amount == 0) {
+            return 0;
+        }
+        int[] dp = new int[amount + 1];
+        int len = coins.length;
+        dp[0] = 0;
+        for (int i = 0; i < len; i++) {
+            for (int j = 1; j <= amount; j++) {
+                if (j >= coins[i] && (dp[j - coins[i]] > 0 || j == coins[i])) {
+                    if (dp[j] != 0) {
+                        dp[j] = Math.min(dp[j - coins[i]] + 1, dp[j]);
+                    } else {
+                        dp[j] = dp[j - coins[i]] + 1;
+                    }
+
+                }
+            }
+        }
+        return dp[amount] > 0 ? dp[amount] : -1;
+    }
+
     // <https://leetcode-cn.com/problems/coin-change/>
     /**
      *完全背包，需要注意的是完全背包的状态方程是一维的
